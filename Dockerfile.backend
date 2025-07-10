@@ -1,0 +1,26 @@
+FROM php:8.3-fpm-alpine
+
+# Instalação de dependências do sistema e extensões PHP
+RUN apk add --no-cache \
+    nginx \
+    curl \
+    git \
+    build-base \
+    libpng-dev \
+    jpeg-dev \
+    libzip-dev \
+    postgresql-dev \
+    oniguruma-dev \
+    && \
+    docker-php-ext-install pdo_mysql pdo_pgsql zip bcmath pcntl gd exif
+
+# Instalação do Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Define o diretório de trabalho
+WORKDIR /var/www/html
+
+# Expor a porta que o PHP-FPM está escutando
+EXPOSE 9000
+
+CMD ["php-fpm"]

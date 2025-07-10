@@ -1,0 +1,36 @@
+# helpdesk-fullstack/.gitignore
+
+# Ignorar arquivos de ambiente Docker
+.env.docker
+
+# Ignorar pasta de volumes do banco de dados
+db_data/
+
+# Ignorar arquivos e pastas do Backend (Laravel)
+backend/.env
+backend/vendor/
+backend/node_modules/
+backend/public/hot
+backend/public/storage
+backend/storage/*.key
+backend/.phpunit.result.cache
+backend/build-*.zip
+backend/vendor/
+backend/npm-debug.log
+backend/yarn-error.log
+backend/mix-manifest.json
+backend/hot
+
+# Ignorar arquivos e pastas do Frontend (Vue.js)
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.*local
+frontend/.vscode/
+frontend/npm-debug.log
+frontend/yarn-error.log
+frontend/pnpm-debug.log
+frontend/pnpm-lock.yaml
+frontend/package-lock.json
+frontend/.idea/
+frontend/.DS_Store

@@ -2,6 +2,10 @@ import './assets/main.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import axios from 'axios'
+
+axios.defaults.baseURL = 'http://localhost/api';
+axios.defaults.withCredentials = true;
 
 import App from './App.vue'
 import router from './router'

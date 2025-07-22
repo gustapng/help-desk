@@ -24,10 +24,25 @@ jobs:
           echo "Waiting for Docker services to start..."
           sleep 15
 
-      - name: Copy .env files and generate Laravel key
+      - name: Create .env files for Docker Compose and Backend
         run: |
-          cp .env.docker .env # Copia o .env.docker para a raiz do projeto para o compose
-          cp backend/.env.example backend/.env
+          echo "DB_CONNECTION=${{ secrets.DB_CONNECTION }}" > .env
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+          echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> .env
+          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+
+          echo "APP_ENV=testing" > backend/.env # Use testing para CI
+          echo "APP_DEBUG=true" >> backend/.env
+          echo "APP_URL=${{ secrets.APP_URL }}" >> backend/.env
+          echo "DB_CONNECTION=${{ secrets.DB_CONNECTION }}" >> backend/.env
+          echo "DB_HOST=database" >> backend/.env
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> backend/.env
+          echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> backend/.env
+          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> backend/.env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> backend/.env
+
           docker compose exec backend php artisan key:generate
           docker compose exec backend php artisan config:clear
 

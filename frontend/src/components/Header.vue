@@ -1,7 +1,3 @@
-<script setup lang="ts">
-    import { RouterLink } from 'vue-router'
-</script>
-
 <template>
     <div class="header">
         <header class="py-5">

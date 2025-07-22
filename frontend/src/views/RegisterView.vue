@@ -1,6 +1,6 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+// import { useRouter } from 'vue-router'
 import axios from 'axios'
 import InputBase from '@/components/inputs/InputBase.vue'
 import InputPassword from '@/components/inputs/InputPassword.vue'
@@ -15,7 +15,7 @@ const password_confirmation = ref('')
 const message = ref('') // Mensagens de sucesso ou erro geral
 const errors = ref(null) // Erros de validação retornados pelo Laravel
 
-const router = useRouter() // Instância do router para navegação
+// const router = useRouter() // Instância do router para navegação
 
 // --- Função de Envio do Formulário ---
 async function handleSubmit() {
@@ -64,7 +64,7 @@ async function handleSubmit() {
           <InputPassword id="password_confirmation" label="Confirmar senha" type="password"
             placeholder="Confirme sua senha" v-model="password_confirmation" :required=true />
         </div>
-        <RoundedButton text="Cadastrar" type="submit" />
+        <RoundedButton type="submit">Cadastrar</RoundedButton>
       </form>
     </div>
   </div>

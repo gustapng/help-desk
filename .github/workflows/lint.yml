@@ -22,14 +22,14 @@ jobs:
       - name: Wait for services to be ready
         run: |
           echo "Waiting for Docker services to start..."
-          sleep 15 # Pode ajustar este tempo se necessário
+          sleep 15
 
       - name: Copy .env files and generate Laravel key
         run: |
           cp .env.docker .env # Copia o .env.docker para a raiz do projeto para o compose
-          cp backend/.env.example backend/.env # Garante que o backend tenha um .env
+          cp backend/.env.example backend/.env
           docker compose exec backend php artisan key:generate
-          docker compose exec backend php artisan config:clear # Limpa o cache de config
+          docker compose exec backend php artisan config:clear
 
       - name: Install Composer Dependencies (Backend)
         run: docker compose exec backend composer install --no-dev --prefer-dist

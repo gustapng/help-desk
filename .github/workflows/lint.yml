@@ -1,0 +1,49 @@
+name: Linting CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Compose
+        run: docker compose up -d
+
+      - name: Wait for services to be ready
+        run: |
+          echo "Waiting for Docker services to start..."
+          sleep 15 # Pode ajustar este tempo se necessário
+
+      - name: Copy .env files and generate Laravel key
+        run: |
+          cp .env.docker .env # Copia o .env.docker para a raiz do projeto para o compose
+          cp backend/.env.example backend/.env # Garante que o backend tenha um .env
+          docker compose exec backend php artisan key:generate
+          docker compose exec backend php artisan config:clear # Limpa o cache de config
+
+      - name: Install Composer Dependencies (Backend)
+        run: docker compose exec backend composer install --no-dev --prefer-dist
+
+      - name: Run Laravel Pint (Backend Linting)
+        run: docker compose exec backend php artisan pint --test
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install NPM Dependencies (Frontend)
+        run: cd frontend && npm install
+
+      - name: Run ESLint (Frontend Linting)
+        run: cd frontend && npm run lint

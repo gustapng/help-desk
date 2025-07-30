@@ -22,6 +22,7 @@
         <component :is="isVisible ? EyeOff : Eye" class="w-5 h-5" />
       </button>
     </div>
+    <p v-if="errorMessage" class="mt-1 text-sm text-red-600">{{ errorMessage }}</p>
   </div>
 </template>
 
@@ -36,6 +37,7 @@ interface Props {
   placeholder?: string
   modelValue?: string
   required?: boolean
+  errorMessage?: string
 }
 
 const {
@@ -43,11 +45,13 @@ const {
   label,
   placeholder,
   modelValue,
-  required
+  required,
+  errorMessage
 } = withDefaults(defineProps<Props>(), {
   placeholder: '',
   modelValue: '',
   required: false,
+  errorMessage: '',
 })
 
 const emit = defineEmits<{

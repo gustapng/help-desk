@@ -2,7 +2,7 @@
 // backend/config/cors.phpp
 return [
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie', 'login', 'logout'],
+    'paths' => ['api/*', 'sanctum/csrf-cookie', 'login', 'logout', 'register'],
     'allowed_origins' => ['http://localhost:5173', 'http://127.0.0.1:5173'], // Porta padrão do Vue Dev Server
     'allowed_methods' => ['*'],
     'allowed_headers' => ['*'],

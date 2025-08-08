@@ -57,12 +57,20 @@ async function handleSubmit() {
       password_confirmation: password_confirmation.value,
     })
 
+    message.value = 'Cadastro realizado com sucesso!'
+    errors.value = {}
     router.push('/')
   } catch (error: any) {
-    if (error.response?.status === 422) {
-      errors.value = error.response.data.errors
+    if (error.response) {
+      if (error.response.status === 422) {
+        errors.value = error.response.data.errors || {}
+        message.value = error.response.data.message || 'Erro de validação.'
+      } 
+      else {
+        message.value = error.response.data.message || 'Ocorreu um erro no servidor.'
+      }
     } else {
-      console.error('Erro inesperado:', error)
+      message.value = 'Erro de conexão. Verifique sua internet e tente novamente.'
     }
   }
 }

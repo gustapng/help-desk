@@ -1,5 +1,5 @@
 <?php
-// backend/config/cors.phpp
+
 return [
 
     'paths' => ['api/*', 'sanctum/csrf-cookie', 'login', 'logout', 'register'],

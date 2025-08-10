@@ -53,6 +53,15 @@ services:
     networks:
       - helpdesk-network
 
+  mailpit:
+    image: docker.io/axllent/mailpit:latest
+    container_name: helpdesk-mailpit
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    networks:
+      - helpdesk-network
+
 volumes:
   db_data:
 

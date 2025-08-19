@@ -21,29 +21,29 @@ function validateForm() {
   errors.value = {};
 
   if (!name.value) {
-    errors.value.name = ['O nome é obrigatório.'];
+    errors.value.name = ['O nome é obrigatório.']
   }
 
   if (!email.value) {
-    errors.value.email = ['O e-mail é obrigatório.'];
+    errors.value.email = ['O e-mail é obrigatório.']
   }
 
   if (!password.value) {
-    errors.value.password = ['A senha é obrigatória.'];
+    errors.value.password = ['A senha é obrigatória.']
   }
 
   if (!password_confirmation.value) {
-    errors.value.password_confirmation = ['A confirmação de senha é obrigatória.'];
+    errors.value.password_confirmation = ['A confirmação de senha é obrigatória.']
   }
 
-  const hasPasswordError = !!errors.value.password;
-  const hasPasswordConfirmationError = !!errors.value.password_confirmation;
+  const hasPasswordError = !!errors.value.password
+  const hasPasswordConfirmationError = !!errors.value.password_confirmation
 
   if (!hasPasswordError && !hasPasswordConfirmationError && password.value !== password_confirmation.value) {
-    errors.value.password_confirmation = ['As senhas não coincidem.'];
+    errors.value.password_confirmation = ['As senhas não coincidem.']
   }
 
-  return Object.keys(errors.value).length === 0;
+  return Object.keys(errors.value).length === 0
 }
 
 async function handleSubmit() {
@@ -58,7 +58,6 @@ async function handleSubmit() {
     })
 
     message.value = 'Cadastro realizado com sucesso!'
-    errors.value = {}
     router.push('/')
   } catch (error: any) {
     if (error.response) {

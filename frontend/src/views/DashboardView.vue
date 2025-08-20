@@ -3,5 +3,5 @@
 </script>
 
 <template>
-  dashboard logado
+  <p>dashboard logado</p>
 </template>

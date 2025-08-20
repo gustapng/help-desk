@@ -1,14 +1,10 @@
 <?php
 
-// backend/routes/api.php
-
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Auth\Events\Registered;
 
 Route::post('/register', function (Request $request) {
@@ -24,45 +20,12 @@ Route::post('/register', function (Request $request) {
         'password' => Hash::make($request->password),
     ]);
 
-    event(new Registered($user)); // Trigger email verification
+    event(new Registered($user));
 
     return response()->json([
-        // 'access_token' => $token,
-        // 'token_type' => 'Bearer',
         'message' => 'Usuário registrado com sucesso. Por favor, verifique seu e-mail para ativar sua conta.'
     ]);
 });
-
-// Route::post('/login', function (Request $request) {
-//     $credentials = $request->validate([
-//         'email' => ['required', 'email'],
-//         'password' => ['required'],
-//     ]);
-
-//     if (!Auth::attempt($credentials)) {
-//         throw ValidationException::withMessages([
-//             'email' => ['As credenciais fornecidas estão incorretas.'],
-//         ]);
-//     }
-
-//     $user = Auth::user();
-
-//     if (is_null($user->email_verified_at)) {
-//         Auth::logout();
-
-//         throw ValidationException::withMessages([
-//             'email' => ['Seu e-mail ainda não foi verificado. Por favor, verifique sua caixa de entrada.'],
-//         ]);
-//     }
-
-//     $request->session()->regenerate();
-
-//     return response()->json(['message' => 'Login bem-sucedido.']);
-// });
-
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
 
 Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);
 
@@ -70,11 +33,11 @@ Route::get('/auth/verify-email/{id}/{hash}', function ($id, $hash, Request $requ
     $user = User::find($id);
 
     if (!$user) {
-        return response()->json(['message' => 'User not found.'], 404);
+        return response()->json(['message' => 'Usuário não encontrado.'], 404);
     }
 
     if (!hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
-        return response()->json(['message' => 'Invalid verification link.'], 403);
+        return response()->json(['message' => 'Link de verificação inválido.'], 403);
     }
 
     if (!$user->hasVerifiedEmail()) {

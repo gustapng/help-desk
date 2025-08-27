@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\PasswordResetController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -46,3 +47,6 @@ Route::get('/auth/verify-email/{id}/{hash}', function ($id, $hash, Request $requ
 
     return redirect('http://localhost:5173/login?verified=true');
 })->middleware('signed')->name('verification.verify');
+
+Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkEmail']);
+Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);

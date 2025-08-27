@@ -1,18 +1,15 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRoute } from 'vue-router'
 import axios from 'axios'
 import InputBase from '@/components/inputs/InputBase.vue'
-import InputPassword from '@/components/inputs/InputPassword.vue'
 import RoundedButton from '@/components/buttons/RoundedButton.vue'
 
 const email = ref('')
-const password = ref('')
 
 const message = ref('') 
 const errors = ref<Record<string, string[]>>({});
 
-const router = useRouter()
 const route = useRoute()
 
 onMounted(() => {
@@ -28,10 +25,6 @@ function validateForm() {
     errors.value.email = ['O e-mail é obrigatório.']
   }
 
-  if (!password.value) {
-    errors.value.password = ['A senha é obrigatória.']
-  }
-
   return Object.keys(errors.value).length === 0
 }
 
@@ -39,39 +32,28 @@ async function handleSubmit() {
   if (!validateForm()) return
 
   try {
-    await axios.get('/sanctum/csrf-cookie')
-
-    await axios.post('/login', {
+    await axios.post('/forgot-password', {
       email: email.value,
-      password: password.value,
     })
-
-    router.push('/dashboard')
-  } catch (error: any) {
-    if (error.response) {
-      if (error.response.status === 422) {
-        errors.value = error.response.data.errors || {}
-        message.value = error.response.data.message || 'Erro de validação.'
-      } 
-      else {
-        message.value = error.response.data.message || 'Ocorreu um erro no servidor.'
-      }
-    } else {
-      message.value = 'Erro de conexão. Verifique sua internet e tente novamente.'
-    }
+  }  catch (err: any) {
+    errors.value = err.response?.data?.message || 'Ocorreu um erro.';
   }
 }
 </script>
 
 <template>
   <header class="py-5">
-    <RouterLink to="/"
+    <RouterLink to="/login"
       class="rounded-full bg-primaryColor hover:bg-black p-3 text-black hover:text-white border border-black">
       Voltar
     </RouterLink>
   </header>
 
   <div>
+    <div class="text-center">
+      <h1>Esqueceu sua senha?</h1>
+      <h2>Digite seu endereço de e-mail e enviaremos instruções para redefinir sua senha.</h2>
+    </div>
     <form @submit.prevent="handleSubmit">
       <div class="mb-6">
         <InputBase
@@ -84,24 +66,7 @@ async function handleSubmit() {
           :error-message="errors.email ? errors.email[0] : ''"
         />
       </div>
-      <div class="mb-6">
-        <InputPassword
-          id="password"
-          label="Senha"
-          type="password"
-          placeholder="Digite sua senha"
-          v-model="password"
-          :required="true"
-          :error-message="errors.password ? errors.password[0] : ''"
-        />
-      </div>
-      <div class="flex justify-between">
-        <RoundedButton type="submit">Fazer Login</RoundedButton>
-        <RouterLink to="/forgot-password"
-          class="text-sm text-black mb-6 hover:underline hover:underline-offset-8">
-          Esqueceu sua senha?
-        </RouterLink>
-      </div>
+      <RoundedButton type="submit">Recuperar Senha</RoundedButton>
       <p v-if="message" :class="{'text-green-600': !errors || Object.keys(errors).length === 0, 'text-red-600': errors && Object.keys(errors).length > 0}" class="mb-4 text-center">
         {{ message }}
       </p>

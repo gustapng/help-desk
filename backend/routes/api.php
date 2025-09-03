@@ -5,7 +5,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
-use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
 use Illuminate\Auth\Events\Registered;
 
 Route::post('/register', function (Request $request) {
@@ -24,11 +23,10 @@ Route::post('/register', function (Request $request) {
     event(new Registered($user));
 
     return response()->json([
-        'message' => 'Usuário registrado com sucesso. Por favor, verifique seu e-mail para ativar sua conta.'
-    ]);
+        'message' => 'Cadastro realizado com sucesso!',
+        'user' => $user,
+    ], 201);
 });
-
-Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);
 
 Route::get('/auth/verify-email/{id}/{hash}', function ($id, $hash, Request $request) {
     $user = User::find($id);
@@ -45,6 +43,7 @@ Route::get('/auth/verify-email/{id}/{hash}', function ($id, $hash, Request $requ
         $user->markEmailAsVerified();
     }
 
+    // TODO - RESOLVER O RETORNO DA API
     return redirect('http://localhost:5173/login?verified=true');
 })->middleware('signed')->name('verification.verify');
 

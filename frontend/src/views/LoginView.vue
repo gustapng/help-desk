@@ -2,37 +2,30 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios'
+import { useAlertStore } from '@/stores/alert'
 import InputBase from '@/components/inputs/InputBase.vue'
 import InputPassword from '@/components/inputs/InputPassword.vue'
 import RoundedButton from '@/components/buttons/RoundedButton.vue'
 
 const email = ref('')
 const password = ref('')
-
 const message = ref('') 
-const errors = ref<Record<string, string[]>>({});
-
+const loading = ref(false)
+const alert = useAlertStore()
 const router = useRouter()
-const route = useRoute()
-
-onMounted(() => {
-  if (route.query.verified === 'true') {
-    message.value = 'Seu e-mail foi verificado com sucesso! Por favor, faça o login.'
-  }
-})
 
 function validateForm() {
-  errors.value = {};
-
   if (!email.value) {
-    errors.value.email = ['O e-mail é obrigatório.']
+    alert.show('O campo de e-mail é obrigatório.', 'error')
+    return false
   }
 
   if (!password.value) {
-    errors.value.password = ['A senha é obrigatória.']
+    alert.show('O campo de senha é obrigatório.', 'error')
+    return false
   }
 
-  return Object.keys(errors.value).length === 0
+  return true
 }
 
 async function handleSubmit() {
@@ -50,7 +43,6 @@ async function handleSubmit() {
   } catch (error: any) {
     if (error.response) {
       if (error.response.status === 422) {
-        errors.value = error.response.data.errors || {}
         message.value = error.response.data.message || 'Erro de validação.'
       } 
       else {
@@ -59,6 +51,9 @@ async function handleSubmit() {
     } else {
       message.value = 'Erro de conexão. Verifique sua internet e tente novamente.'
     }
+    alert.show(message.value, 'error');
+  } finally {
+    loading.value = false
   }
 }
 </script>
@@ -80,8 +75,6 @@ async function handleSubmit() {
           type="email"
           placeholder="Digite seu e-mail"
           v-model="email"
-          :required="true"
-          :error-message="errors.email ? errors.email[0] : ''"
         />
       </div>
       <div class="mb-6">
@@ -91,20 +84,17 @@ async function handleSubmit() {
           type="password"
           placeholder="Digite sua senha"
           v-model="password"
-          :required="true"
-          :error-message="errors.password ? errors.password[0] : ''"
         />
       </div>
       <div class="flex justify-between">
-        <RoundedButton type="submit">Fazer Login</RoundedButton>
+        <RoundedButton type="submit" :disabled="loading">
+          {{ loading ? 'Logando...' : 'Fazer Login' }}
+        </RoundedButton>
         <RouterLink to="/forgot-password"
           class="text-sm text-black mb-6 hover:underline hover:underline-offset-8">
           Esqueceu sua senha?
         </RouterLink>
       </div>
-      <p v-if="message" :class="{'text-green-600': !errors || Object.keys(errors).length === 0, 'text-red-600': errors && Object.keys(errors).length > 0}" class="mb-4 text-center">
-        {{ message }}
-      </p>
     </form>
   </div>
 </template>

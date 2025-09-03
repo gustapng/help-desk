@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
-import InputBase from '@/components/inputs/InputBase.vue'
+import InputPassword from '@/components/inputs/InputPassword.vue'
 import RoundedButton from '@/components/buttons/RoundedButton.vue'
 
 const route = useRoute();
@@ -36,7 +36,7 @@ function validateForm() {
   return Object.keys(errors.value).length === 0
 }
 
-
+// TODO - REVER FUNC E ALERTAR DOS CAMPOS
 async function handleResetPassword() {
   message.value = '';
 
@@ -61,6 +61,13 @@ async function handleResetPassword() {
 </script>
 
 <template>
+  <header class="py-5">
+    <RouterLink to="/"
+      class="rounded-full bg-primaryColor hover:bg-black p-3 text-black hover:text-white border border-black">
+      Voltar
+    </RouterLink>
+  </header>
+
   <div>
     <h2>Redefina sua Senha</h2>
     <form @submit.prevent="handleResetPassword">

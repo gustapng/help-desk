@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
+import { useAlertStore } from '@/stores/alert'
 import InputBase from '@/components/inputs/InputBase.vue'
 import InputPassword from '@/components/inputs/InputPassword.vue'
 import RoundedButton from '@/components/buttons/RoundedButton.vue'
@@ -11,58 +12,58 @@ const secondaryName = ref('')
 const email = ref('')
 const password = ref('')
 const password_confirmation = ref('')
-
 const message = ref('') 
-const errors = ref<Record<string, string[]>>({});
-
+const loading = ref(false)
+const alert = useAlertStore()
 const router = useRouter()
 
 function validateForm() {
-  errors.value = {};
-
   if (!name.value) {
-    errors.value.name = ['O nome é obrigatório.']
+    alert.show('O campo de nome é obrigatório.', 'error')
+    return false
   }
 
   if (!email.value) {
-    errors.value.email = ['O e-mail é obrigatório.']
+    alert.show('O campo de e-mail é obrigatório.', 'error')
+    return false
   }
 
   if (!password.value) {
-    errors.value.password = ['A senha é obrigatória.']
+    alert.show('O campo de senha é obrigatório.', 'error')
+    return false
   }
 
   if (!password_confirmation.value) {
-    errors.value.password_confirmation = ['A confirmação de senha é obrigatória.']
+    alert.show('O campo de confirmação de senha é obrigatório.', 'error')
+    return false
   }
 
-  const hasPasswordError = !!errors.value.password
-  const hasPasswordConfirmationError = !!errors.value.password_confirmation
-
-  if (!hasPasswordError && !hasPasswordConfirmationError && password.value !== password_confirmation.value) {
-    errors.value.password_confirmation = ['As senhas não coincidem.']
+  if (password.value !== password_confirmation.value) {
+    alert.show('Os campo de senhas não coincidem.', 'error')
+    return false
   }
 
-  return Object.keys(errors.value).length === 0
+  return true
 }
 
 async function handleSubmit() {
   if (!validateForm()) return
 
   try {
-    await axios.post('/register', {
+    loading.value = true
+
+    await axios.post('/api/register', {
       name: name.value,
       email: email.value,
       password: password.value,
       password_confirmation: password_confirmation.value,
     })
 
-    message.value = 'Cadastro realizado com sucesso!'
+    alert.show('Cadastro realizado com sucesso!', 'success')
     router.push('/')
   } catch (error: any) {
     if (error.response) {
       if (error.response.status === 422) {
-        errors.value = error.response.data.errors || {}
         message.value = error.response.data.message || 'Erro de validação.'
       } 
       else {
@@ -71,6 +72,9 @@ async function handleSubmit() {
     } else {
       message.value = 'Erro de conexão. Verifique sua internet e tente novamente.'
     }
+    alert.show(message.value, 'error');
+  } finally {
+    loading.value = false
   }
 }
 </script>
@@ -87,8 +91,20 @@ async function handleSubmit() {
     <div>
       <form @submit.prevent="handleSubmit">
         <div class="grid gap-6 mb-6 md:grid-cols-2">
-          <InputBase id="name" label="Nome" type="text" placeholder="Digite seu nome" v-model="name" :required=true />
-          <InputBase id="secondaryName" label="Sobrenome" type="text" placeholder="Digite seu sobrenome" v-model="secondaryName" :required=true />
+          <InputBase 
+            id="name"
+            label="Nome"
+            type="text"
+            placeholder="Digite seu nome"
+            v-model="name" 
+          />
+          <InputBase
+            id="secondaryName"
+            label="Sobrenome"
+            type="text"
+            placeholder="Digite seu sobrenome"
+            v-model="secondaryName"
+          />
         </div>
         <div class="mb-6">
           <InputBase
@@ -97,8 +113,6 @@ async function handleSubmit() {
             type="email"
             placeholder="Digite seu e-mail"
             v-model="email"
-            :required="true"
-            :error-message="errors.email ? errors.email[0] : ''"
           />
         </div>
         <div class="mb-6">
@@ -108,8 +122,6 @@ async function handleSubmit() {
             type="password"
             placeholder="Digite sua senha"
             v-model="password"
-            :required="true"
-            :error-message="errors.password ? errors.password[0] : ''"
           />
         </div>
         <div class="mb-6">
@@ -119,16 +131,12 @@ async function handleSubmit() {
             type="password"
             placeholder="Confirme sua senha"
             v-model="password_confirmation"
-            :required="true"
-            :error-message="errors.password_confirmation ? errors.password_confirmation[0] : ''"
           />
         </div>
 
-        <p v-if="message" :class="{'text-green-600': !errors || Object.keys(errors).length === 0, 'text-red-600': errors && Object.keys(errors).length > 0}" class="mb-4 text-center">
-          {{ message }}
-        </p>
-
-        <RoundedButton type="submit">Cadastrar</RoundedButton>
+        <RoundedButton type="submit" :disabled="loading">
+          {{ loading ? 'Cadastrando...' : 'Cadastrar' }}
+        </RoundedButton>
       </form>
     </div>
   </div>

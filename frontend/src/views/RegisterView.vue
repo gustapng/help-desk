@@ -23,18 +23,18 @@ function validateForm() {
     return false
   }
 
-  if (!email.value) {
-    alert.show('O campo de e-mail é obrigatório.', 'error')
-    return false
-  }
-
-  if (!password.value) {
+    if (!password.value) {
     alert.show('O campo de senha é obrigatório.', 'error')
     return false
   }
 
   if (!password_confirmation.value) {
     alert.show('O campo de confirmação de senha é obrigatório.', 'error')
+    return false
+  }
+
+  if (!email.value) {
+    alert.show('O campo de e-mail é obrigatório.', 'error')
     return false
   }
 
@@ -47,19 +47,21 @@ function validateForm() {
 }
 
 async function handleSubmit() {
+  message.value = '';
   if (!validateForm()) return
 
   try {
     loading.value = true
 
-    await axios.post('/api/register', {
+    const response = await axios.post('/api/register', {
       name: name.value,
       email: email.value,
       password: password.value,
       password_confirmation: password_confirmation.value,
     })
 
-    alert.show('Cadastro realizado com sucesso!', 'success')
+    message.value = response.data.message;
+    alert.show(message.value, 'success')
     router.push('/')
   } catch (error: any) {
     if (error.response) {

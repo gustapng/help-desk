@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { useAlertStore } from '@/stores/alert'
 import axios from 'axios'
 import InputBase from '@/components/inputs/InputBase.vue'
 import RoundedButton from '@/components/buttons/RoundedButton.vue'
@@ -8,35 +9,52 @@ import RoundedButton from '@/components/buttons/RoundedButton.vue'
 const email = ref('')
 
 const message = ref('') 
-const errors = ref<Record<string, string[]>>({});
-
+const loading = ref(false)
+const alert = useAlertStore()
 const route = useRoute()
+const router = useRouter()
 
 onMounted(() => {
   if (route.query.verified === 'true') {
-    message.value = 'Seu e-mail foi verificado com sucesso! Por favor, faça o login.'
+    message.value = 'Seu e-mail foi verificado com sucesso!'
   }
 })
 
 function validateForm() {
-  errors.value = {};
-
-  if (!email.value) {
-    errors.value.email = ['O e-mail é obrigatório.']
+    if (!email.value) {
+    alert.show('O campo de email é obrigatório.', 'error')
+    return false
   }
 
-  return Object.keys(errors.value).length === 0
+  return true
 }
 
 async function handleSubmit() {
   if (!validateForm()) return
 
   try {
-    await axios.post('/forgot-password', {
+    loading.value = true
+
+    const response = await axios.post('/api/forgot-password', {
       email: email.value,
     })
-  }  catch (err: any) {
-    errors.value = err.response?.data?.message || 'Ocorreu um erro.';
+
+    message.value = response.data.message;
+    alert.show(message.value, 'success')
+  } catch (error: any) {
+    if (error.response) {
+      if (error.response.status === 422) {
+        message.value = error.response.data.message || 'Erro de validação.'
+      } 
+      else {
+        message.value = error.response.data.message || 'Ocorreu um erro no servidor.'
+      }
+    } else {
+      message.value = 'Erro de conexão. Verifique sua internet e tente novamente.'
+    }
+    alert.show(message.value, 'error');
+  } finally {
+    loading.value = false
   }
 }
 </script>
@@ -62,14 +80,12 @@ async function handleSubmit() {
           type="email"
           placeholder="Digite seu e-mail"
           v-model="email"
-          :required="true"
-          :error-message="errors.email ? errors.email[0] : ''"
         />
       </div>
-      <RoundedButton type="submit">Recuperar Senha</RoundedButton>
-      <p v-if="message" :class="{'text-green-600': !errors || Object.keys(errors).length === 0, 'text-red-600': errors && Object.keys(errors).length > 0}" class="mb-4 text-center">
-        {{ message }}
-      </p>
+
+      <RoundedButton type="submit" :disabled="loading">
+        {{ loading ? 'Enviando email de recuperação...' : 'Recuperar senha' }}
+      </RoundedButton>
     </form>
   </div>
 </template>

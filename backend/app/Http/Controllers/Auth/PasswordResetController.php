@@ -25,7 +25,6 @@ class PasswordResetController extends Controller
     public function resetPassword(Request $request) {
         $request->validate([        
             'token' => ['required'],
-            'email' => ['required|email'],
             'password' => ['required', 'string', 'min:8', 'confirmed', 'regex:/[0-9]/', 'regex:/[@$!%*#?&.]/']]
         );
 
@@ -38,7 +37,7 @@ class PasswordResetController extends Controller
         });
 
         if ($status === Password::PASSWORD_RESET) {
-            return response()->json(['message' => 'Sua senha foi redefinida com sucesso!']);
+            return response()->json(['message' => 'Redefinição de senha realizada com sucesso!']);
         }
 
         return response()->json(['message' => 'O token de redefinição é inválido.'], 422);

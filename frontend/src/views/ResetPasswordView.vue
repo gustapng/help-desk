@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useAlertStore } from '@/stores/alert'
 import axios from 'axios';
 import InputPassword from '@/components/inputs/InputPassword.vue'
 import RoundedButton from '@/components/buttons/RoundedButton.vue'
@@ -12,9 +13,9 @@ const token = ref('');
 const email = ref('');
 const password = ref('');
 const password_confirmation = ref('');
-
+const loading = ref(false)
+const alert = useAlertStore()
 const message = ref('');
-const errors = ref<Record<string, string[]>>({});
 
 // Pega o token e o email da URL quando o componente é montado
 onMounted(() => {
@@ -23,39 +24,55 @@ onMounted(() => {
 });
 
 function validateForm() {
-  errors.value = {};
-
   if (!password.value) {
-    errors.value.password = ['A senha é obrigatória.']
+    alert.show('O campo de senha é obrigatório.', 'error')
+    return false
   }
 
   if (!password_confirmation.value) {
-    errors.value.password_confirmation = ['A confirmação de senha é obrigatória.']
+    alert.show('O campo de confirmação de senha é obrigatório.', 'error')
+    return false
   }
 
-  return Object.keys(errors.value).length === 0
+  if (password.value !== password_confirmation.value) {
+    alert.show('Os campo de senhas não coincidem.', 'error')
+    return false
+  }
+
+  return true
 }
 
-// TODO - REVER FUNC E ALERTAR DOS CAMPOS
 async function handleResetPassword() {
   message.value = '';
-
   if (!validateForm()) return
 
   try {
+    loading.value = true
+
     const response = await axios.post('/api/reset-password', {
       token: token.value,
       email: email.value,
       password: password.value,
       password_confirmation: password_confirmation.value,
     });
+
     message.value = response.data.message;
-    // Redireciona para o login após sucesso
-    setTimeout(() => {
-      router.push('/login');
-    }, 2000);
-  } catch (err: any) {
-    errors.value = err.response?.data?.message || 'Ocorreu um erro.';
+    alert.show(message.value, 'success')
+    router.push('/login');
+  } catch (error: any) {
+    if (error.response) {
+      if (error.response.status === 422) {
+        message.value = error.response.data.message || 'Erro de validação.'
+      } 
+      else {
+        message.value = error.response.data.message || 'Ocorreu um erro no servidor.'
+      }
+    } else {
+      message.value = 'Erro de conexão. Verifique sua internet e tente novamente.'
+    }
+    alert.show(message.value, 'error');
+  } finally {
+    loading.value = false
   }
 }
 </script>
@@ -80,8 +97,6 @@ async function handleResetPassword() {
           type="password"
           placeholder="Digite sua senha"
           v-model="password"
-          :required="true"
-          :error-message="errors.password ? errors.password[0] : ''"
         />
       </div>
       <div class="mb-6">
@@ -91,16 +106,12 @@ async function handleResetPassword() {
           type="password"
           placeholder="Confirme sua senha"
           v-model="password_confirmation"
-          :required="true"
-          :error-message="errors.password_confirmation ? errors.password_confirmation[0] : ''"
         />
       </div>
 
-      <p v-if="message" :class="{'text-green-600': !errors || Object.keys(errors).length === 0, 'text-red-600': errors && Object.keys(errors).length > 0}" class="mb-4 text-center">
-        {{ message }}
-      </p>
-
-      <RoundedButton type="submit">Redefinir senha</RoundedButton>
+      <RoundedButton type="submit" :disabled="loading">
+        {{ loading ? 'Redefinindo senha...' : 'Redefinir senha' }}
+      </RoundedButton>
     </form>
   </div>
 </template>

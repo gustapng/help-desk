@@ -23,7 +23,7 @@ Route::post('/register', function (Request $request) {
     event(new Registered($user));
 
     return response()->json([
-        'message' => 'Cadastro realizado com sucesso!',
+        'message' => 'Cadastro realizado com sucesso! Por favor confirme na sua caixa de email.',
         'user' => $user,
     ], 201);
 });
@@ -32,18 +32,28 @@ Route::get('/auth/verify-email/{id}/{hash}', function ($id, $hash, Request $requ
     $user = User::find($id);
 
     if (!$user) {
-        return response()->json(['message' => 'Usuário não encontrado.'], 404);
+        return $request->wantsJson()
+            ? response()->json(['message' => 'Usuário não encontrado.'], 404)
+            : redirect(env('FRONTEND_URL') . '/login?verified=not_found');
     }
 
     if (!hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
-        return response()->json(['message' => 'Link de verificação inválido.'], 403);
+        return $request->wantsJson()
+            ? response()->json(['message' => 'Link de verificação inválido.'], 403)
+            : redirect(env('FRONTEND_URL') . '/login?verified=invalid');
     }
 
     if (!$user->hasVerifiedEmail()) {
         $user->markEmailAsVerified();
     }
 
-    // TODO - RESOLVER O RETORNO DA API
+    if ($request->wantsJson()) {
+        return response()->json([
+            'message' => 'E-mail verificado com sucesso.',
+            'user' => $user,
+        ]);
+    }
+
     return redirect('http://localhost:5173/login?verified=true');
 })->middleware('signed')->name('verification.verify');
 

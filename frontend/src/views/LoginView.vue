@@ -12,7 +12,24 @@ const password = ref('')
 const message = ref('') 
 const loading = ref(false)
 const alert = useAlertStore()
+const route = useRoute()
 const router = useRouter()
+
+onMounted(() => {
+  const verified = route.query.verified
+
+  if (verified === 'true') {
+    alert.show('Seu e-mail foi verificado com sucesso! Por favor, faça o login.', 'success')
+  } else if (verified === 'not_found') {
+    alert.show('Seu usuário não foi encontrado.', 'error')
+  } else if (verified === 'invalid') {
+    alert.show('Seu link de verificação é inválido.', 'error')
+  }
+
+  if (verified) {
+    router.replace({ query: { ...route.query, verified: undefined } })
+  }
+})
 
 function validateForm() {
   if (!email.value) {
@@ -32,6 +49,8 @@ async function handleSubmit() {
   if (!validateForm()) return
 
   try {
+    loading.value = true
+
     await axios.get('/sanctum/csrf-cookie')
 
     await axios.post('/login', {

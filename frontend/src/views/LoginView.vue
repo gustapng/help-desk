@@ -6,6 +6,7 @@ import { useAlertStore } from '@/stores/alert'
 import InputBase from '@/components/inputs/InputBase.vue'
 import InputPassword from '@/components/inputs/InputPassword.vue'
 import RoundedButton from '@/components/buttons/RoundedButton.vue'
+import { useAuthStore } from '@/stores/auth'
 
 const email = ref('')
 const password = ref('')
@@ -51,12 +52,13 @@ async function handleSubmit() {
   try {
     loading.value = true
 
-    await axios.get('/sanctum/csrf-cookie')
-
-    await axios.post('/login', {
+    const response = await axios.post('/login', {
       email: email.value,
       password: password.value,
     })
+
+    const authStore = useAuthStore()
+    await authStore.checkAuth()
 
     router.push('/dashboard')
   } catch (error: any) {

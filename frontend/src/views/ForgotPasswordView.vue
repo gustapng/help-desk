@@ -41,6 +41,7 @@ async function handleSubmit() {
 
     message.value = response.data.message;
     alert.show(message.value, 'success')
+    email.value = ''
   } catch (error: any) {
     if (error.response) {
       if (error.response.status === 422) {

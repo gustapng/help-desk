@@ -32,15 +32,15 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useAlertStore } from '@/stores/alert'
-import { CheckCircleIcon, XCircleIcon, ExclamationTriangleIcon, InformationCircleIcon } from '@heroicons/vue/24/solid'
+import { CheckIcon, XCircle, AlertTriangle, Info } from 'lucide-vue-next'
 
 const alert = useAlertStore()
 
 const icons = {
-  success: CheckCircleIcon,
-  error: XCircleIcon,
-  warning: ExclamationTriangleIcon,
-  info: InformationCircleIcon,
+  success: CheckIcon,
+  error: XCircle,
+  warning: AlertTriangle,
+  info: Info,
 }
 
 const icon = computed(() => icons[alert.type])

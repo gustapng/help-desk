@@ -7,43 +7,40 @@ const props = defineProps<{
   size?: 'sm' | 'md' | 'lg' // tamanho opcional
 }>()
 
-// const emit = defineEmits(['close'])
+const emit = defineEmits(['close'])
 </script>
 
 <template>
-    <transition name="fade">
-        <div
-            v-if="show"
-            class="fixed inset-0 flex items-center justify-center bg-black/50 z-50"
-        >
-            <div
-                class="bg-white rounded-xl shadow-lg p-6"
-                :class="{
-                    'max-w-sm w-full': size === 'sm',
-                    'max-w-md w-full': size === 'md' || !size,
-                    'max-w-lg w-full': size === 'lg',
-                }"
-            >
-                <!-- Cabeçalho -->
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center">
-                        <slot name="icon"></slot>
-                        <h2 class="text-xl font-semibold" v-if="title">{{ title }}</h2>
-                    </div>
-                    <!-- <button
+  <transition name="fade">
+    <div v-if="props.show" class="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+      <div
+        class="bg-white rounded-xl shadow-lg p-6"
+        :class="{
+          'max-w-sm w-full': props.size === 'sm',
+          'max-w-md w-full': props.size === 'md' || !props.size,
+          'max-w-lg w-full': props.size === 'lg',
+        }"
+      >
+        <!-- Cabeçalho -->
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center">
+            <slot name="icon"></slot>
+            <h2 class="text-xl font-semibold" v-if="props.title">{{ props.title }}</h2>
+          </div>
+          <!-- <button
                         class="text-gray-400 hover:text-gray-600"
                         @click="emit('close')"
                     >
                         ✕
                     </button> -->
-                </div>
-
-                <hr>
-                <!-- Conteúdo do modal -->
-                <slot></slot>
-            </div>
         </div>
-    </transition>
+
+        <hr />
+        <!-- Conteúdo do modal -->
+        <slot></slot>
+      </div>
+    </div>
+  </transition>
 </template>
 
 <style scoped>

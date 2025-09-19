@@ -1,12 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
+
 import { useAuthStore } from '@/stores/auth'
-import HomeView from '../views/HomeView.vue'
-import RegisterView from '@/views/RegisterView.vue'
-import LoginView from '../views/LoginView.vue'
 import ForgotPasswordView from '@/views/ForgotPasswordView.vue'
+import RegisterView from '@/views/RegisterView.vue'
 import ResetPasswordView from '@/views/ResetPasswordView.vue'
-import DashboardView from '../views/DashboardView.vue'
 import TicketView from '@/views/TicketView.vue'
+
+import DashboardView from '../views/DashboardView.vue'
+import HomeView from '../views/HomeView.vue'
+import LoginView from '../views/LoginView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -31,7 +33,7 @@ const router = createRouter({
       name: 'forgotPassword',
       component: ForgotPasswordView,
     },
-        {
+    {
       path: '/reset-password',
       name: 'resetPassword',
       component: ResetPasswordView,
@@ -40,13 +42,13 @@ const router = createRouter({
       path: '/dashboard',
       name: 'dashboard',
       component: DashboardView,
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true },
     },
     {
       path: '/ticket',
       name: 'ticker',
       component: TicketView,
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true },
     },
   ],
 })
@@ -62,11 +64,9 @@ router.beforeEach(async (to, from, next) => {
 
   if (to.meta.requiresAuth && !isAuthenticated) {
     next({ name: 'login' })
-  }
-  else if (to.name === 'login' && isAuthenticated) {
+  } else if (to.name === 'login' && isAuthenticated) {
     next({ name: 'dashboard' })
-  }
-  else {
+  } else {
     next()
   }
 })

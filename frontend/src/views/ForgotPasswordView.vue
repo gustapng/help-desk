@@ -1,18 +1,19 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useAlertStore } from '@/stores/alert'
 import axios from 'axios'
-import InputBase from '@/components/inputs/InputBase.vue'
+import type { AxiosError } from 'axios'
+import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+
 import RoundedButton from '@/components/buttons/RoundedButton.vue'
+import InputBase from '@/components/inputs/InputBase.vue'
+import { useAlertStore } from '@/stores/alert'
 
 const email = ref('')
 
-const message = ref('') 
+const message = ref('')
 const loading = ref(false)
 const alert = useAlertStore()
 const route = useRoute()
-const router = useRouter()
 
 onMounted(() => {
   if (route.query.verified === 'true') {
@@ -21,7 +22,7 @@ onMounted(() => {
 })
 
 function validateForm() {
-    if (!email.value) {
+  if (!email.value) {
     alert.show('O campo de email é obrigatório.', 'error')
     return false
   }
@@ -39,21 +40,22 @@ async function handleSubmit() {
       email: email.value,
     })
 
-    message.value = response.data.message;
+    message.value = response.data.message
     alert.show(message.value, 'success')
     email.value = ''
-  } catch (error: any) {
-    if (error.response) {
-      if (error.response.status === 422) {
-        message.value = error.response.data.message || 'Erro de validação.'
-      } 
-      else {
-        message.value = error.response.data.message || 'Ocorreu um erro no servidor.'
+  } catch (error) {
+    const err = error as AxiosError<{ message?: string; errors?: Record<string, string[]> }>
+
+    if (err.response) {
+      if (err.response.status === 422) {
+        message.value = err.response.data.message || 'Erro de validação.'
+      } else {
+        message.value = err.response.data.message || 'Ocorreu um erro no servidor.'
       }
     } else {
       message.value = 'Erro de conexão. Verifique sua internet e tente novamente.'
     }
-    alert.show(message.value, 'error');
+    alert.show(message.value, 'error')
   } finally {
     loading.value = false
   }
@@ -62,8 +64,10 @@ async function handleSubmit() {
 
 <template>
   <header class="py-5">
-    <RouterLink to="/login"
-      class="rounded-full bg-primaryColor hover:bg-black p-3 text-black hover:text-white border border-black">
+    <RouterLink
+      to="/login"
+      class="rounded-full bg-primaryColor hover:bg-black p-3 text-black hover:text-white border border-black"
+    >
       Voltar
     </RouterLink>
   </header>

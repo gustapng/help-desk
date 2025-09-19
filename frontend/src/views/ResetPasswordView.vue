@@ -1,27 +1,29 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { useAlertStore } from '@/stores/alert'
-import axios from 'axios';
-import InputPassword from '@/components/inputs/InputPassword.vue'
+import axios from 'axios'
+import type { AxiosError } from 'axios'
+import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+
 import RoundedButton from '@/components/buttons/RoundedButton.vue'
+import InputPassword from '@/components/inputs/InputPassword.vue'
+import { useAlertStore } from '@/stores/alert'
 
-const route = useRoute();
-const router = useRouter();
+const route = useRoute()
+const router = useRouter()
 
-const token = ref('');
-const email = ref('');
-const password = ref('');
-const password_confirmation = ref('');
+const token = ref('')
+const email = ref('')
+const password = ref('')
+const password_confirmation = ref('')
 const loading = ref(false)
 const alert = useAlertStore()
-const message = ref('');
+const message = ref('')
 
 // Pega o token e o email da URL quando o componente é montado
 onMounted(() => {
-  token.value = route.query.token as string;
-  email.value = route.query.email as string;
-});
+  token.value = route.query.token as string
+  email.value = route.query.email as string
+})
 
 function validateForm() {
   if (!password.value) {
@@ -43,7 +45,7 @@ function validateForm() {
 }
 
 async function handleResetPassword() {
-  message.value = '';
+  message.value = ''
   if (!validateForm()) return
 
   try {
@@ -54,23 +56,24 @@ async function handleResetPassword() {
       email: email.value,
       password: password.value,
       password_confirmation: password_confirmation.value,
-    });
+    })
 
-    message.value = response.data.message;
+    message.value = response.data.message
     alert.show(message.value, 'success')
-    router.push('/login');
-  } catch (error: any) {
-    if (error.response) {
-      if (error.response.status === 422) {
-        message.value = error.response.data.message || 'Erro de validação.'
-      } 
-      else {
-        message.value = error.response.data.message || 'Ocorreu um erro no servidor.'
+    router.push('/login')
+  } catch (error) {
+    const err = error as AxiosError<{ message?: string; errors?: Record<string, string[]> }>
+
+    if (err.response) {
+      if (err.response.status === 422) {
+        message.value = err.response.data.message || 'Erro de validação.'
+      } else {
+        message.value = err.response.data.message || 'Ocorreu um erro no servidor.'
       }
     } else {
       message.value = 'Erro de conexão. Verifique sua internet e tente novamente.'
     }
-    alert.show(message.value, 'error');
+    alert.show(message.value, 'error')
   } finally {
     loading.value = false
   }
@@ -79,8 +82,10 @@ async function handleResetPassword() {
 
 <template>
   <header class="py-5">
-    <RouterLink to="/"
-      class="rounded-full bg-primaryColor hover:bg-black p-3 text-black hover:text-white border border-black">
+    <RouterLink
+      to="/"
+      class="rounded-full bg-primaryColor hover:bg-black p-3 text-black hover:text-white border border-black"
+    >
       Voltar
     </RouterLink>
   </header>
@@ -89,7 +94,7 @@ async function handleResetPassword() {
     <h2>Redefina sua Senha</h2>
     <form @submit.prevent="handleResetPassword">
       <input type="hidden" v-model="email" />
-      
+
       <div class="mb-6">
         <InputPassword
           id="password"

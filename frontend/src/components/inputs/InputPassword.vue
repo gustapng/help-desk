@@ -27,9 +27,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import { Eye, EyeOff } from 'lucide-vue-next'
-import { defineProps, defineEmits, withDefaults } from 'vue'
+import { ref, defineProps, defineEmits, withDefaults } from 'vue'
 
 interface Props {
   id: string
@@ -40,19 +39,15 @@ interface Props {
   errorMessage?: string
 }
 
-const {
-  id,
-  label,
-  placeholder,
-  modelValue,
-  required,
-  errorMessage
-} = withDefaults(defineProps<Props>(), {
-  placeholder: '',
-  modelValue: '',
-  required: false,
-  errorMessage: '',
-})
+const { id, label, placeholder, modelValue, required, errorMessage } = withDefaults(
+  defineProps<Props>(),
+  {
+    placeholder: '',
+    modelValue: '',
+    required: false,
+    errorMessage: '',
+  }
+)
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void

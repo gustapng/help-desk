@@ -1,18 +1,20 @@
 <script setup lang="ts">
+import axios from 'axios'
+import type { AxiosError } from 'axios'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
-import { useAlertStore } from '@/stores/alert'
+
+import RoundedButton from '@/components/buttons/RoundedButton.vue'
 import InputBase from '@/components/inputs/InputBase.vue'
 import InputPassword from '@/components/inputs/InputPassword.vue'
-import RoundedButton from '@/components/buttons/RoundedButton.vue'
+import { useAlertStore } from '@/stores/alert'
 
 const name = ref('')
 const secondaryName = ref('')
 const email = ref('')
 const password = ref('')
 const password_confirmation = ref('')
-const message = ref('') 
+const message = ref('')
 const loading = ref(false)
 const alert = useAlertStore()
 const router = useRouter()
@@ -23,7 +25,7 @@ function validateForm() {
     return false
   }
 
-    if (!password.value) {
+  if (!password.value) {
     alert.show('O campo de senha é obrigatório.', 'error')
     return false
   }
@@ -47,7 +49,7 @@ function validateForm() {
 }
 
 async function handleSubmit() {
-  message.value = '';
+  message.value = ''
   if (!validateForm()) return
 
   try {
@@ -60,21 +62,22 @@ async function handleSubmit() {
       password_confirmation: password_confirmation.value,
     })
 
-    message.value = response.data.message;
+    message.value = response.data.message
     alert.show(message.value, 'success')
     router.push('/')
-  } catch (error: any) {
-    if (error.response) {
-      if (error.response.status === 422) {
-        message.value = error.response.data.message || 'Erro de validação.'
-      } 
-      else {
-        message.value = error.response.data.message || 'Ocorreu um erro no servidor.'
+  } catch (error) {
+    const err = error as AxiosError<{ message?: string; errors?: Record<string, string[]> }>
+
+    if (err.response) {
+      if (err.response.status === 422) {
+        message.value = err.response.data.message || 'Erro de validação.'
+      } else {
+        message.value = err.response.data.message || 'Ocorreu um erro no servidor.'
       }
     } else {
       message.value = 'Erro de conexão. Verifique sua internet e tente novamente.'
     }
-    alert.show(message.value, 'error');
+    alert.show(message.value, 'error')
   } finally {
     loading.value = false
   }
@@ -84,8 +87,10 @@ async function handleSubmit() {
 <template>
   <div class="register">
     <header class="py-5">
-      <RouterLink to="/"
-        class="rounded-full bg-primaryColor hover:bg-black p-3 text-black hover:text-white border border-black">
+      <RouterLink
+        to="/"
+        class="rounded-full bg-primaryColor hover:bg-black p-3 text-black hover:text-white border border-black"
+      >
         Voltar
       </RouterLink>
     </header>
@@ -93,12 +98,12 @@ async function handleSubmit() {
     <div>
       <form @submit.prevent="handleSubmit">
         <div class="grid gap-6 mb-6 md:grid-cols-2">
-          <InputBase 
+          <InputBase
             id="name"
             label="Nome"
             type="text"
             placeholder="Digite seu nome"
-            v-model="name" 
+            v-model="name"
           />
           <InputBase
             id="secondaryName"

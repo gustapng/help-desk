@@ -1,16 +1,18 @@
 <script setup lang="ts">
+import axios from 'axios'
+import type { AxiosError } from 'axios'
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import axios from 'axios'
-import { useAlertStore } from '@/stores/alert'
+
+import RoundedButton from '@/components/buttons/RoundedButton.vue'
 import InputBase from '@/components/inputs/InputBase.vue'
 import InputPassword from '@/components/inputs/InputPassword.vue'
-import RoundedButton from '@/components/buttons/RoundedButton.vue'
+import { useAlertStore } from '@/stores/alert'
 import { useAuthStore } from '@/stores/auth'
 
 const email = ref('')
 const password = ref('')
-const message = ref('') 
+const message = ref('')
 const loading = ref(false)
 const alert = useAlertStore()
 const route = useRoute()
@@ -52,7 +54,7 @@ async function handleSubmit() {
   try {
     loading.value = true
 
-    const response = await axios.post('/login', {
+    await axios.post('/login', {
       email: email.value,
       password: password.value,
     })
@@ -61,18 +63,19 @@ async function handleSubmit() {
     await authStore.checkAuth()
 
     router.push('/dashboard')
-  } catch (error: any) {
-    if (error.response) {
-      if (error.response.status === 422) {
-        message.value = error.response.data.message || 'Erro de validação.'
-      } 
-      else {
-        message.value = error.response.data.message || 'Ocorreu um erro no servidor.'
+  } catch (error) {
+    const err = error as AxiosError<{ message?: string; errors?: Record<string, string[]> }>
+
+    if (err.response) {
+      if (err.response.status === 422) {
+        message.value = err.response.data.message || 'Erro de validação.'
+      } else {
+        message.value = err.response.data.message || 'Ocorreu um erro no servidor.'
       }
     } else {
       message.value = 'Erro de conexão. Verifique sua internet e tente novamente.'
     }
-    alert.show(message.value, 'error');
+    alert.show(message.value, 'error')
   } finally {
     loading.value = false
   }
@@ -81,8 +84,10 @@ async function handleSubmit() {
 
 <template>
   <header class="py-5">
-    <RouterLink to="/"
-      class="rounded-full bg-primaryColor hover:bg-black p-3 text-black hover:text-white border border-black">
+    <RouterLink
+      to="/"
+      class="rounded-full bg-primaryColor hover:bg-black p-3 text-black hover:text-white border border-black"
+    >
       Voltar
     </RouterLink>
   </header>
@@ -111,8 +116,10 @@ async function handleSubmit() {
         <RoundedButton type="submit" :disabled="loading">
           {{ loading ? 'Logando...' : 'Fazer Login' }}
         </RoundedButton>
-        <RouterLink to="/forgot-password"
-          class="text-sm text-black mb-6 hover:underline hover:underline-offset-8">
+        <RouterLink
+          to="/forgot-password"
+          class="text-sm text-black mb-6 hover:underline hover:underline-offset-8"
+        >
           Esqueceu sua senha?
         </RouterLink>
       </div>

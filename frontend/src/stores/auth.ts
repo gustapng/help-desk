@@ -1,10 +1,10 @@
-import { defineStore } from 'pinia'
 import axios from 'axios'
+import { defineStore } from 'pinia'
 
 interface User {
-  id: number;
-  name: string;
-  email: string;
+  id: number
+  name: string
+  email: string
 }
 
 export const useAuthStore = defineStore('auth', {
@@ -18,13 +18,13 @@ export const useAuthStore = defineStore('auth', {
 
   actions: {
     async checkAuth() {
-      if (this.user) return;
+      if (this.user) return
 
       try {
-        const response = await axios.get('/user');
-        this.user = response.data;
-      } catch (error) {
-        this.user = null;
+        const response = await axios.get('/user')
+        this.user = response.data
+      } catch {
+        this.user = null
       }
     },
   },

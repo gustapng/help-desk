@@ -1,9 +1,6 @@
 <template>
   <div>
-    <label
-      :for="id"
-      class="block mb-2 text-sm font-medium text-black"
-    >
+    <label :for="id" class="block mb-2 text-sm font-medium text-black">
       {{ label }}
     </label>
     <input
@@ -32,21 +29,16 @@ interface Props {
   errorMessage?: string
 }
 
-const {
-  id,
-  label,
-  type,
-  placeholder,
-  modelValue,
-  required,
-  errorMessage
-} = withDefaults(defineProps<Props>(), {
-  type: 'text',
-  placeholder: '',
-  modelValue: '',
-  required: false,
-  errorMessage: '',
-})
+const { id, label, type, placeholder, modelValue, required, errorMessage } = withDefaults(
+  defineProps<Props>(),
+  {
+    type: 'text',
+    placeholder: '',
+    modelValue: '',
+    required: false,
+    errorMessage: '',
+  }
+)
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void

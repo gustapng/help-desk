@@ -19,7 +19,7 @@
         class="absolute right-3 top-1/2 -translate-y-1/2"
         :aria-label="isVisible ? 'Esconder senha' : 'Mostrar senha'"
       >
-        <component :is="isVisible ? EyeOff : Eye" class="w-5 h-5" />
+        <component :is="isVisible ? EyeOff : Eye" class="w-5 h-5 hover:text-emerald-400" />
       </button>
     </div>
     <p v-if="errorMessage" class="mt-1 text-sm text-red-600">{{ errorMessage }}</p>

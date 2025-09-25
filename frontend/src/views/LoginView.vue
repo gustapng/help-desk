@@ -83,46 +83,62 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <header class="py-5">
-    <RouterLink
-      to="/"
-      class="rounded-full bg-primaryColor hover:bg-black p-3 text-black hover:text-white border border-black"
-    >
-      Voltar
-    </RouterLink>
-  </header>
+  <div class="flex flex-col min-h-screen">
+    <header class="px-6">
+      <div class="max-w-7xl mx-auto flex justify-between items-center py-4">
+        <h1 class="text-2xl font-bold">Help Desk</h1>
+        <nav class="flex">
+          <RouterLink
+            to="/"
+            class="rounded-full bg-primaryColor hover:bg-black px-4 py-3 text-black hover:text-white border border-black"
+          >
+            Voltar
+          </RouterLink>
+        </nav>
+      </div>
+    </header>
 
-  <div>
-    <form @submit.prevent="handleSubmit">
-      <div class="mb-6">
-        <InputBase
-          id="email"
-          label="E-mail"
-          type="email"
-          placeholder="Digite seu e-mail"
-          v-model="email"
-        />
+    <main class="flex-grow flex justify-center items-center px-6">
+      <div class="w-full sm:max-w-sm">
+        <h2 class="text-center text-2xl font-bold mb-10">Entre na sua conta</h2>
+        <form class="space-y-6" @submit.prevent="handleSubmit">
+          <div>
+            <InputBase
+              id="email"
+              label="E-mail"
+              type="email"
+              placeholder="Digite seu e-mail"
+              v-model="email"
+            />
+          </div>
+          <div>
+            <InputPassword
+              id="password"
+              label="Senha"
+              type="password"
+              placeholder="Digite sua senha"
+              v-model="password"
+            />
+          </div>
+          <div class="flex justify-end">
+            <RouterLink
+              to="/forgot-password"
+              class="text-sm font-semibold text-emerald-400 mb-6 hover:underline hover:underline-offset-8"
+            >
+              Esqueceu sua senha?
+            </RouterLink>
+          </div>
+          <RoundedButton class="w-full justify-center" type="submit" :disabled="loading">
+            {{ loading ? 'Logando...' : 'Fazer Login' }}
+          </RoundedButton>
+          <p class="mt-10 text-center text-sm">
+            Não é membro?
+            <a href="/register" class="font-semibold text-emerald-400 hover:text-emerald-300 hover:underline hover:underline-offset-8">
+              Registre-se agora
+            </a>
+          </p>
+        </form>
       </div>
-      <div class="mb-6">
-        <InputPassword
-          id="password"
-          label="Senha"
-          type="password"
-          placeholder="Digite sua senha"
-          v-model="password"
-        />
-      </div>
-      <div class="flex justify-between">
-        <RoundedButton type="submit" :disabled="loading">
-          {{ loading ? 'Logando...' : 'Fazer Login' }}
-        </RoundedButton>
-        <RouterLink
-          to="/forgot-password"
-          class="text-sm text-black mb-6 hover:underline hover:underline-offset-8"
-        >
-          Esqueceu sua senha?
-        </RouterLink>
-      </div>
-    </form>
+    </main>
   </div>
 </template>

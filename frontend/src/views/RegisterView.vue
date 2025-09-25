@@ -85,66 +85,80 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <div class="register">
-    <header class="py-5">
-      <RouterLink
-        to="/"
-        class="rounded-full bg-primaryColor hover:bg-black p-3 text-black hover:text-white border border-black"
-      >
-        Voltar
-      </RouterLink>
+  <div class="flex flex-col min-h-screen">
+    <header class="px-6">
+      <div class="max-w-7xl mx-auto flex justify-between items-center py-4">
+        <h1 class="text-2xl font-bold">Help Desk</h1>
+        <nav class="flex">
+          <RouterLink
+            to="/"
+            class="rounded-full bg-primaryColor hover:bg-black px-4 py-3 text-black hover:text-white border border-black"
+          >
+            Voltar
+          </RouterLink>
+        </nav>
+      </div>
     </header>
 
-    <div>
-      <form @submit.prevent="handleSubmit">
-        <div class="grid gap-6 mb-6 md:grid-cols-2">
-          <InputBase
-            id="name"
-            label="Nome"
-            type="text"
-            placeholder="Digite seu nome"
-            v-model="name"
-          />
-          <InputBase
-            id="secondaryName"
-            label="Sobrenome"
-            type="text"
-            placeholder="Digite seu sobrenome"
-            v-model="secondaryName"
-          />
-        </div>
-        <div class="mb-6">
-          <InputBase
-            id="email"
-            label="E-mail"
-            type="email"
-            placeholder="Digite seu e-mail"
-            v-model="email"
-          />
-        </div>
-        <div class="mb-6">
-          <InputPassword
-            id="password"
-            label="Senha"
-            type="password"
-            placeholder="Digite sua senha"
-            v-model="password"
-          />
-        </div>
-        <div class="mb-6">
-          <InputPassword
-            id="password_confirmation"
-            label="Confirmar Senha"
-            type="password"
-            placeholder="Confirme sua senha"
-            v-model="password_confirmation"
-          />
-        </div>
+    <main class="flex-grow flex justify-center items-center px-6">
+      <div class="w-full sm:max-w-sm">
+        <h2 class="text-center text-2xl font-bold mb-10">Registre-se agora</h2>
+        <form class="space-y-6" @submit.prevent="handleSubmit">
+          <div class="grid gap-6 md:grid-cols-2">
+            <InputBase
+              id="name"
+              label="Nome"
+              type="text"
+              placeholder="Digite seu nome"
+              v-model="name"
+            />
+            <InputBase
+              id="secondaryName"
+              label="Sobrenome"
+              type="text"
+              placeholder="Digite seu sobrenome"
+              v-model="secondaryName"
+            />
+          </div>
+          <div>
+            <InputBase
+              id="email"
+              label="E-mail"
+              type="email"
+              placeholder="Digite seu e-mail"
+              v-model="email"
+            />
+          </div>
+          <div>
+            <InputPassword
+              id="password"
+              label="Senha"
+              type="password"
+              placeholder="Digite sua senha"
+              v-model="password"
+            />
+          </div>
+          <div>
+            <InputPassword
+              id="password_confirmation"
+              label="Confirmar Senha"
+              type="password"
+              placeholder="Confirme sua senha"
+              v-model="password_confirmation"
+            />
+          </div>
 
-        <RoundedButton type="submit" :disabled="loading">
-          {{ loading ? 'Cadastrando...' : 'Cadastrar' }}
-        </RoundedButton>
-      </form>
-    </div>
+          <RoundedButton class="w-full justify-center" type="submit" :disabled="loading">
+            {{ loading ? 'Cadastrando...' : 'Cadastrar' }}
+          </RoundedButton>
+          <p class="mt-10 text-center text-sm">
+            Já é membro?
+            <a href="/login" class="font-semibold text-emerald-400 hover:text-emerald-300 hover:underline hover:underline-offset-8">
+              Faça login agora
+            </a>
+          </p>
+        </form>
+      </div>
+    </main>
   </div>
 </template>

@@ -1,28 +1,28 @@
 <template>
   <Header></Header>
-  <div class="overflow-hidden bg-gray-900 py-24 sm:py-32">
-    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+  <div class="overflow-hidden py-24 sm:py-32">
+    <div class="mx-auto max-w-7xl px-6">
       <div
         class="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2"
       >
         <div class="lg:pt-4 lg:pr-8">
           <div class="lg:max-w-lg">
-            <h2 class="text-base/7 font-semibold text-indigo-400">Deploy faster</h2>
+            <h2 class="text-base/7 font-semibold text-colorBlue">Deploy faster</h2>
             <p
-              class="mt-2 text-4xl font-semibold tracking-tight text-pretty text-white sm:text-5xl"
+              class="mt-2 text-4xl font-semibold tracking-tight text-pretty text-gray-700 sm:text-5xl"
             >
               A better workflow
             </p>
-            <p class="mt-6 text-lg/8 text-gray-300">
+            <p class="mt-6 text-lg/8 text-gray-500">
               Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis
               suscipit eaque, iste dolor cupiditate blanditiis ratione.
             </p>
-            <dl class="mt-10 max-w-xl space-y-8 text-base/7 text-gray-400 lg:max-w-none">
+            <dl class="mt-10 max-w-xl space-y-8 text-base/7 text-gray-500 lg:max-w-none">
               <div v-for="feature in features" :key="feature.name" class="relative pl-9">
-                <dt class="inline font-semibold text-white">
+                <dt class="inline font-semibold text-gray-700">
                   <component
                     :is="feature.icon"
-                    class="absolute top-1 left-1 size-5 text-indigo-400"
+                    class="absolute top-1 left-1 size-5 text-colorBlue"
                     aria-hidden="true"
                   />
                   {{ feature.name }}

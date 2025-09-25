@@ -24,19 +24,19 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <header class="shadow-sm px-4 sm:px-6 lg:px-8 bg-white relative z-50">
+  <header class="px-6">
     <div class="max-w-7xl mx-auto flex justify-between items-center py-4">
       <h1 class="text-2xl font-bold">Help Desk</h1>
       <nav class="hidden md:flex space-x-4">
         <RouterLink
           to="/register"
-          class="rounded-full hover:bg-black px-4 py-2 text-black hover:text-white border border-black transition-all"
+          class="rounded-full hover:bg-black px-4 py-3 text-black hover:text-white border border-black transition-all"
         >
           Registre-se
         </RouterLink>
         <RouterLink
           to="/login"
-          class="rounded-full bg-colorGreen hover:bg-black px-4 py-2 text-black hover:text-white border border-colorGreen hover:border-black transition-all"
+          class="rounded-full bg-emerald-400 hover:bg-black px-4 py-3 text-black hover:text-white border border-emerald-400 hover:border-black transition-all"
         >
           Login
         </RouterLink>

@@ -2,7 +2,7 @@
   <button
     :type="buttonType"
     @click="emitClick"
-    class="rounded-full bg-colorGreen hover:bg-black text-black hover:text-white p-3 transition-colors duration-200"
+    class="rounded-full bg-emerald-400 hover:bg-black text-black hover:text-white p-3 transition-colors duration-200"
   >
     <slot />
   </button>

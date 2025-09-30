@@ -1,12 +1,15 @@
 <template>
   <div>
-    <label :for="id" class="block mb-2 text-sm font-medium text-black">
+    <label :for="id" class="block mb-2 text-sm font-medium">
       {{ label }}
     </label>
     <input
       :id="id"
       :type="type"
-      class="bg-primaryColor border border-black text-gray-900 text-sm rounded-lg focus:ring-emerald-400 focus:border-emerald-400 block w-full p-2.5"
+      :class="[
+        'border border-black text-sm rounded-lg focus:ring-emerald-400 focus:border-emerald-400 block w-full p-2.5',
+        inputClass,
+      ]"
       :placeholder="placeholder"
       :value="modelValue"
       :required="required"
@@ -27,12 +30,14 @@ interface Props {
   modelValue?: string
   required?: boolean
   errorMessage?: string
+  inputClass?: string;
 }
 
-const { id, label, type, placeholder, modelValue, required, errorMessage } = withDefaults(
+const { id, label, type, inputClass, placeholder, modelValue, required, errorMessage } = withDefaults(
   defineProps<Props>(),
   {
     type: 'text',
+    inputClass: '', // <-- Defina um valor padrão
     placeholder: '',
     modelValue: '',
     required: false,

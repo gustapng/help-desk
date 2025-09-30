@@ -84,7 +84,7 @@ async function handleResetPassword() {
   <header class="py-5">
     <RouterLink
       to="/"
-      class="rounded-full bg-primaryColor hover:bg-black p-3 text-black hover:text-white border border-black"
+      class="rounded-full hover:bg-black p-3 text-black hover:text-white border border-black"
     >
       Voltar
     </RouterLink>

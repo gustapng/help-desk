@@ -4,7 +4,7 @@ import { defineProps, defineEmits } from 'vue'
 const props = defineProps<{
   show: boolean
   title?: string
-  size?: 'sm' | 'md' | 'lg' // tamanho opcional
+  size?: 'sm' | 'md' | 'lg' | 'xl' 
 }>()
 
 const emit = defineEmits(['close'])
@@ -19,6 +19,7 @@ const emit = defineEmits(['close'])
           'max-w-sm w-full': props.size === 'sm',
           'max-w-md w-full': props.size === 'md' || !props.size,
           'max-w-lg w-full': props.size === 'lg',
+          'max-w-xl w-full': props.size === 'xl',
         }"
       >
         <!-- Cabeçalho -->
@@ -27,15 +28,9 @@ const emit = defineEmits(['close'])
             <slot name="icon"></slot>
             <h2 class="text-xl font-semibold" v-if="props.title">{{ props.title }}</h2>
           </div>
-          <!-- <button
-                        class="text-gray-400 hover:text-gray-600"
-                        @click="emit('close')"
-                    >
-                        ✕
-                    </button> -->
         </div>
 
-        <hr />
+        <hr class="mb-2 text-black"/>
         <!-- Conteúdo do modal -->
         <slot></slot>
       </div>

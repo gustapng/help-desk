@@ -90,7 +90,7 @@ async function handleSubmit() {
         <nav class="flex">
           <RouterLink
             to="/"
-            class="rounded-full bg-primaryColor hover:bg-black px-4 py-3 text-black hover:text-white border border-black"
+            class="rounded-full hover:bg-black px-4 py-3 text-black hover:text-white border border-black"
           >
             Voltar
           </RouterLink>
@@ -128,7 +128,7 @@ async function handleSubmit() {
               Esqueceu sua senha?
             </RouterLink>
           </div>
-          <RoundedButton class="w-full justify-center" type="submit" :disabled="loading">
+          <RoundedButton class="w-full" type="submit" :disabled="loading">
             {{ loading ? 'Logando...' : 'Fazer Login' }}
           </RoundedButton>
           <p class="mt-10 text-center text-sm">

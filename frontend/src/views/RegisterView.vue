@@ -64,7 +64,7 @@ async function handleSubmit() {
 
     message.value = response.data.message
     alert.show(message.value, 'success')
-    router.push('/')
+    router.push('/login')
   } catch (error) {
     const err = error as AxiosError<{ message?: string; errors?: Record<string, string[]> }>
 
@@ -92,7 +92,7 @@ async function handleSubmit() {
         <nav class="flex">
           <RouterLink
             to="/"
-            class="rounded-full bg-primaryColor hover:bg-black px-4 py-3 text-black hover:text-white border border-black"
+            class="rounded-full hover:bg-black px-4 py-3 text-black hover:text-white border border-black"
           >
             Voltar
           </RouterLink>

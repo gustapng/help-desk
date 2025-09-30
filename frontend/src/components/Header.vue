@@ -36,7 +36,7 @@ onBeforeUnmount(() => {
         </RouterLink>
         <RouterLink
           to="/login"
-          class="rounded-full bg-emerald-400 hover:bg-black px-4 py-3 text-black hover:text-white border border-emerald-400 hover:border-black transition-all"
+          class="rounded-full bg-emerald-400 hover:bg-black px-4 py-3 text-white border border-emerald-400 hover:border-black transition-all"
         >
           Login
         </RouterLink>
@@ -60,14 +60,14 @@ onBeforeUnmount(() => {
         <nav class="flex flex-col p-4 space-y-2">
           <RouterLink
             to="/register"
-            class="rounded-lg bg-primaryColor px-4 py-2 text-center text-black hover:bg-black hover:text-white border border-black transition-all"
+            class="rounded-lg px-4 py-2 text-center text-black hover:bg-black hover:text-white border border-black transition-all"
             @click="isOpen = false"
           >
             Registre-se
           </RouterLink>
           <RouterLink
             to="/login"
-            class="rounded-lg bg-colorGreen px-4 py-2 text-center text-black hover:bg-black hover:text-white border border-colorGreen hover:border-black transition-all"
+            class="rounded-lg bg-emerald-400 px-4 py-2 text-center text-white hover:bg-black border border-emerald-400 hover:border-black transition-all"
             @click="isOpen = false"
           >
             Login

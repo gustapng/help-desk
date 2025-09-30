@@ -11,89 +11,93 @@ import {
   Ticket,
   ChevronsUpDown,
   Check,
-  CircleEllipsis,
-  CircleAlert,
-  Wrench,
-  CircleQuestionMark,
-  Lightbulb,
-  ShieldAlert,
-  Folder,
 } from 'lucide-vue-next'
 import { ref } from 'vue'
 
+import type {
+  TicketTypeOption,
+  TicketPriorityOption,
+  TicketCreatePayload,
+} from '@/types/Ticket'
+
+// 2. IMPORTE OS DADOS
+import { ticketTypes, ticketPriorities } from '@/data/ticket-options'
+
+import InputBase from '@/components/inputs/InputBase.vue'
 import BaseModal from '@/components/BaseModal.vue'
 import RoundedButton from '@/components/buttons/RoundedButton.vue'
 import Sidebar from '@/components/Sidebar.vue'
+import { useAlertStore } from '@/stores/alert'
 
-const ticketType = [
-  {
-    id: 0,
-    name: 'Selecione',
-    icon: CircleEllipsis,
-  },
-  {
-    id: 1,
-    name: 'Problema Técnico',
-    icon: CircleAlert,
-  },
-  {
-    id: 2,
-    name: 'Solicitação de Serviço',
-    icon: Wrench,
-  },
-  {
-    id: 3,
-    name: 'Dúvida / Suporte',
-    icon: CircleQuestionMark,
-  },
-  {
-    id: 4,
-    name: 'Melhoria / Sugestão',
-    icon: Lightbulb,
-  },
-  {
-    id: 5,
-    name: 'Incidente de Segurança',
-    icon: ShieldAlert,
-  },
-  {
-    id: 6,
-    name: 'Outro',
-    icon: Folder,
-  },
-]
-const selected = ref(ticketType[0])
+const ticket_name = ref('')
+const ticket_description = ref('')
+const alert = useAlertStore()
 
-const priorities = [
-  {
-    id: 1,
-    label: 'Baixa',
-    classes: 'bg-green-100 border-green-300 text-green-800',
-    dotClass: 'bg-green-400',
-  },
-  {
-    id: 2,
-    label: 'Média',
-    classes: 'bg-yellow-100 border-yellow-300 text-yellow-800',
-    dotClass: 'bg-yellow-400',
-  },
-  {
-    id: 3,
-    label: 'Alta',
-    classes: 'bg-red-100 border-red-300 text-red-800',
-    dotClass: 'bg-red-400',
-  },
-]
-const selectedPriority = ref<number | null>(null)
+const selectedTicketType = ref<TicketTypeOption>(ticketTypes[0])
+const selectedTicketPriority = ref(<number | null>(null))
 
-function selectPriority(id: number) {
-  selectedPriority.value = id
+function selectTicketPriority(id: number) {
+  selectedTicketPriority.value = id
 }
 
 const isModalOpen = ref(false)
 
+function validateForm() {
+  if (!ticket_description.value) {
+    alert.show('O campo de descrição é obrigatório.', 'error')
+    return false
+  }
+
+  if (!ticket_name.value) {
+    alert.show('O campo de nome é obrigatório.', 'error')
+    return false
+  }
+
+  if (!selectedTicketPriority.value) {
+    alert.show('É obrigatório selecionar uma prioridade.', 'error')
+    return false
+  }
+
+    if (selectedTicketType.value.id === 0) {
+    alert.show('É obrigatório selecionar o tipo de ticket.', 'error')
+    return false
+  }
+
+  return true
+}
+
+// TODO - confirm if this code snippet is necessary
+function resetForm() {
+  ticket_name.value = '';
+  ticket_description.value = '';
+  selectedTicketType.value = ticketTypes[0];
+  selectedTicketPriority.value = null;
+}
+
 function handleCreateTicket() {
+  if (!validateForm()) return
+
+  const ticketPayload: TicketCreatePayload = {
+    name: ticket_name.value,
+    description: ticket_description.value,
+    type_id: selectedTicketType.value.id,
+    priority_id: selectedTicketPriority.value!, // O '!' diz ao TS que temos certeza que não é null aqui
+  };
+
+  console.log('Objeto que será enviado para a API:', ticketPayload);
+
+  // 2. Chame a API com o payload limpo
+  // try {
+  //   await axios.post('/api/tickets', ticketPayload);
+  //   alert.show('Ticket criado com sucesso!', 'success');
+  //   closeModal(); // Fecha e reseta o formulário
+  // } catch (error) {
+  //   // ... tratamento de erro
+  // }
+
   isModalOpen.value = false
+
+  resetForm();
 }
 </script>
 
@@ -102,58 +106,57 @@ function handleCreateTicket() {
   <div class="p-4 sm:ml-64">
     <div class="flex items-center place-content-between">
       <h1>Ticket</h1>
-      <RoundedButton class="flex items-center" @click="isModalOpen = true">
+      <RoundedButton class="flex items-center text-white" @click="isModalOpen = true">
         <Plus class="mr-2"></Plus>
         Criar Ticket
       </RoundedButton>
     </div>
-    <BaseModal :show="isModalOpen" title="Criar Novo Ticket" size="lg" @close="isModalOpen = false">
+    <BaseModal :show="isModalOpen" title="Criar Novo Ticket" size="xl" @close="isModalOpen = false">
       <template #icon>
-        <div class="rounded-lg p-2 mr-2 bg-gray-100">
-          <Ticket class="text-colorBlue"></Ticket>
+        <div class="rounded-lg p-2 mr-2 bg-gray-200">
+          <Ticket class="text-sky-400"></Ticket>
         </div>
       </template>
       <form @submit.prevent="handleCreateTicket" class="space-y-4">
-        <div class="flex">
-          <div>
-            <div class="col-span-full">
-              <label for="about" class="block text-sm/6 font-medium">Descrição</label>
-              <div class="mt-1">
+        <div class="flex space-x-6">
+          <div class="flex flex-col w-full"> 
+            <div class="col-span-full h-full flex flex-col">
+              <label for="ticket_description" class="block mb-2 text-sm font-medium">Descrição</label>
+              <div class="flex-grow"> 
                 <textarea
-                  name="about"
-                  id="about"
-                  rows="3"
-                  class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base border border-gray-200 outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+                  name="ticket_description"
+                  id="ticket_description"
+                  v-model="ticket_description"
+                  class="block h-full border border-gray-200 text-sm rounded-lg focus:ring-emerald-400 focus:border-emerald-400 w-full p-2.5 "
                 />
               </div>
             </div>
           </div>
-          <div>
+          <div class="space-y-6">
             <div>
-              <label class="block text-sm/6 font-medium">Nome do Ticket</label>
-              <div class="mt-1">
-                <input
-                  type="text"
-                  name="street-address"
-                  id="street-address"
-                  autocomplete="street-address"
-                  class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base border border-gray-200 outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
-                />
-              </div>
+              <InputBase
+                id="ticket_name"
+                label="Nome do Ticket"
+                type="ticket_name"
+                v-model="ticket_name"
+                inputClass="border-gray-200" 
+              />
             </div>
             <div>
-              <h2 class="mb-2 text-sm font-semibold text-gray-700">Prioridade</h2>
+              <h2 class="block mb-2 text-sm font-medium">Prioridade</h2>
               <div class="flex items-center gap-2">
                 <button
-                  v-for="priority in priorities"
+                  v-for="priority in ticketPriorities"
                   :key="priority.id"
                   type="button"
-                  @click="selectPriority(priority.id)"
-                  class="inline-flex items-center gap-x-2 rounded-md px-3 py-2 text-xs font-medium border transition-colors duration-200"
+                  name="ticket_priority"
+                  id="ticket_priority"
+                  @click="selectTicketPriority(priority.id)"
+                  class="inline-flex items-center gap-x-2 rounded-lg px-3 py-2 text-xs font-medium border transition-colors duration-200"
                   :class="[
-                    selectedPriority === priority.id
+                    selectedTicketPriority === priority.id
                       ? priority.classes
-                      : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-100 hover:border-gray-300',
+                      : 'bg-white border-gray-200 text-gray-800 hover:bg-gray-100 hover:border-gray-300',
                   ]"
                 >
                   <span class="w-2 h-2 rounded-full" :class="priority.dotClass"></span>
@@ -162,15 +165,15 @@ function handleCreateTicket() {
               </div>
             </div>
             <div>
-              <Listbox as="div" v-model="selected">
-                <ListboxLabel class="block text-sm/6 font-medium">Tipo de Ticket</ListboxLabel>
-                <div class="relative mt-1">
+              <Listbox as="div" v-model="selectedTicketType">
+                <ListboxLabel class="block mb-2 text-sm font-medium">Tipo de Ticket</ListboxLabel>
+                <div class="relative">
                   <ListboxButton
-                    class="grid w-full cursor-default grid-cols-1 rounded-md border border-gray-200 py-1.5 pr-2 pl-3 text-left text-white outline-1 -outline-offset-1 outline-white/10 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-indigo-500 sm:text-sm/6"
+                    class="grid border border-gray-200 text-sm rounded-lg focus:ring-emerald-400 focus:border-emerald-400 w-full p-2.5"
                   >
                     <span class="col-start-1 row-start-1 flex items-center gap-3 pr-6">
-                      <component :is="selected.icon" class="size-5 shrink-0 text-gray-400" />
-                      <span class="block truncate text-black">{{ selected.name }}</span>
+                      <component :is="selectedTicketType.icon" class="size-5 shrink-0 text-gray-800" />
+                      <span class="block truncate text-black">{{ selectedTicketType.name }}</span>
                     </span>
                     <ChevronsUpDown
                       class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-400 sm:size-4"
@@ -195,16 +198,16 @@ function handleCreateTicket() {
                       >
                         <li
                           :class="[
-                            active ? 'bg-colorBlue text-white outline-hidden' : 'text-white',
+                            active ? 'text-gray-800 bg-gray-200' : 'text-gray-500',
                             'relative cursor-default py-2 pr-9 pl-3 select-none',
                           ]"
                         >
                           <div class="flex items-center">
-                            <component :is="ticket.icon" class="size-5 shrink-0 text-gray-400" />
+                            <component :is="ticket.icon" class="size-5 shrink-0 text-gray-800" />
                             <span
                               :class="[
                                 selected ? 'font-semibold' : 'font-normal',
-                                'ml-3 block truncate text-black',
+                                'ml-3 block truncate text-gray-800',
                               ]"
                               >{{ ticket.name }}</span
                             >
@@ -213,8 +216,7 @@ function handleCreateTicket() {
                           <span
                             v-if="selected"
                             :class="[
-                              active ? 'text-white' : 'text-colorBlue',
-                              'absolute inset-y-0 right-0 flex items-center pr-4',
+                              'absolute inset-y-0 right-0 flex items-center pr-4 text-gray-800',
                             ]"
                           >
                             <Check class="size-5" aria-hidden="true" />
@@ -226,17 +228,17 @@ function handleCreateTicket() {
                 </div>
               </Listbox>
             </div>
-            <div class="flex justify-end gap-2">
+            <div class="flex justify-between">
               <button
                 type="button"
                 @click="isModalOpen = false"
-                class="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700"
+                class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
-                class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white"
+                class="px-4 py-2 rounded-lg bg-sky-400 hover:bg-sky-500 text-white"
               >
                 Criar Ticket
               </button>

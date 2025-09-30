@@ -63,34 +63,41 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <header class="py-5">
-    <RouterLink
-      to="/login"
-      class="rounded-full bg-primaryColor hover:bg-black p-3 text-black hover:text-white border border-black"
-    >
-      Voltar
-    </RouterLink>
-  </header>
-
-  <div>
-    <div class="text-center">
-      <h1>Esqueceu sua senha?</h1>
-      <h2>Digite seu endereço de e-mail e enviaremos instruções para redefinir sua senha.</h2>
-    </div>
-    <form @submit.prevent="handleSubmit">
-      <div class="mb-6">
-        <InputBase
-          id="email"
-          label="E-mail"
-          type="email"
-          placeholder="Digite seu e-mail"
-          v-model="email"
-        />
+  <div class="flex flex-col min-h-screen">
+    <header class="px-6">
+      <div class="max-w-7xl mx-auto flex justify-between items-center py-4">
+        <h1 class="text-2xl font-bold">Help Desk</h1>
+        <nav class="flex">
+          <RouterLink
+            to="/"
+            class="rounded-full hover:bg-black px-4 py-3 text-black hover:text-white border border-black"
+          >
+            Voltar
+          </RouterLink>
+        </nav>
       </div>
+    </header>
 
-      <RoundedButton type="submit" :disabled="loading">
-        {{ loading ? 'Enviando email de recuperação...' : 'Recuperar senha' }}
-      </RoundedButton>
-    </form>
+    <main class="flex-grow flex justify-center items-center px-6">
+      <div class="w-full sm:max-w-sm">
+        <h2 class="text-center text-2xl font-bold mb-2">Esqueceu sua senha?</h2>
+        <h3 class="text-center text-sm  mb-10">Digite seu endereço de e-mail e enviaremos instruções para redefinir sua senha.</h3>
+        <form class="space-y-6" @submit.prevent="handleSubmit">
+          <div>
+            <InputBase
+              id="email"
+              label="E-mail"
+              type="email"
+              placeholder="Digite seu e-mail"
+              v-model="email"
+            />
+          </div>
+
+          <RoundedButton class="w-full" type="submit" :disabled="loading">
+            {{ loading ? 'Enviando email de recuperação...' : 'Recuperar senha' }}
+          </RoundedButton>
+        </form>
+      </div>
+    </main>
   </div>
 </template>

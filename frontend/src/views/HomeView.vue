@@ -7,7 +7,7 @@
       >
         <div class="lg:pt-4 lg:pr-8">
           <div class="lg:max-w-lg">
-            <h2 class="text-base/7 font-semibold text-colorBlue">Deploy faster</h2>
+            <h2 class="text-base/7 font-semibold text-sky-400">Deploy faster</h2>
             <p
               class="mt-2 text-4xl font-semibold tracking-tight text-pretty text-gray-700 sm:text-5xl"
             >
@@ -22,7 +22,7 @@
                 <dt class="inline font-semibold text-gray-700">
                   <component
                     :is="feature.icon"
-                    class="absolute top-1 left-1 size-5 text-colorBlue"
+                    class="absolute top-1 left-1 size-5 text-sky-400"
                     aria-hidden="true"
                   />
                   {{ feature.name }}

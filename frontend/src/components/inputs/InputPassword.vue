@@ -7,7 +7,7 @@
       <input
         :id="id"
         :type="isVisible ? 'text' : 'password'"
-        class="bg-primaryColor border border-black text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
+        class="bg-white border border-black text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
         :placeholder="placeholder"
         :value="modelValue"
         :required="required"

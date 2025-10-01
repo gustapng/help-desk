@@ -2,13 +2,13 @@ import type { TicketTypeOption, TicketPriorityOption } from '@/types/Ticket';
 import { CircleEllipsis, CircleAlert, Wrench, CircleQuestionMark, Lightbulb, ShieldAlert, Folder } from 'lucide-vue-next';
 
 export const ticketTypes: TicketTypeOption[] = [
-    { id: 0, name: 'Selecione', icon: CircleEllipsis },
-    { id: 1, name: 'Problema Técnico', icon: CircleAlert },
-    { id: 2, name: 'Solicitação de Serviço', icon: Wrench },
-    { id: 3, name: 'Dúvida / Suporte', icon: CircleQuestionMark },
-    { id: 4, name: 'Melhoria / Sugestão', icon: Lightbulb },  
-    { id: 5, name: 'Incidente de Segurança', icon: ShieldAlert },  
-    { id: 6, name: 'Outro', icon: Folder },
+    { id: 0, title: 'Selecione', icon: CircleEllipsis },
+    { id: 1, title: 'Problema Técnico', icon: CircleAlert },
+    { id: 2, title: 'Solicitação de Serviço', icon: Wrench },
+    { id: 3, title: 'Dúvida / Suporte', icon: CircleQuestionMark },
+    { id: 4, title: 'Melhoria / Sugestão', icon: Lightbulb },  
+    { id: 5, title: 'Incidente de Segurança', icon: ShieldAlert },  
+    { id: 6, title: 'Outro', icon: Folder },
 ];
 
 export const ticketPriorities: TicketPriorityOption[] = [

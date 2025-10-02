@@ -30,20 +30,18 @@ interface Props {
   modelValue?: string
   required?: boolean
   errorMessage?: string
-  inputClass?: string;
+  inputClass?: string
 }
 
-const { id, label, type, inputClass, placeholder, modelValue, required, errorMessage } = withDefaults(
-  defineProps<Props>(),
-  {
+const { id, label, type, inputClass, placeholder, modelValue, required, errorMessage } =
+  withDefaults(defineProps<Props>(), {
     type: 'text',
     inputClass: '', // <-- Defina um valor padrão
     placeholder: '',
     modelValue: '',
     required: false,
     errorMessage: '',
-  }
-)
+  })
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void

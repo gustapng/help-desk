@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue'
+import { defineProps } from 'vue'
 
 const props = defineProps<{
   show: boolean
   title?: string
-  size?: 'sm' | 'md' | 'lg' | 'xl' 
+  size?: 'sm' | 'md' | 'lg' | 'xl'
 }>()
-
-const emit = defineEmits(['close'])
 </script>
 
 <template>
@@ -30,7 +28,7 @@ const emit = defineEmits(['close'])
           </div>
         </div>
 
-        <hr class="mb-2 text-black"/>
+        <hr class="mb-2 text-black" />
         <!-- Conteúdo do modal -->
         <slot></slot>
       </div>

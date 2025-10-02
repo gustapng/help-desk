@@ -133,7 +133,10 @@ async function handleSubmit() {
           </RoundedButton>
           <p class="mt-10 text-center text-sm">
             Não é membro?
-            <a href="/register" class="font-semibold text-emerald-400 hover:text-emerald-300 hover:underline hover:underline-offset-8">
+            <a
+              href="/register"
+              class="font-semibold text-emerald-400 hover:text-emerald-300 hover:underline hover:underline-offset-8"
+            >
               Registre-se agora
             </a>
           </p>

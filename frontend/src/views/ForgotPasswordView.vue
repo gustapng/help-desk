@@ -81,7 +81,9 @@ async function handleSubmit() {
     <main class="flex-grow flex justify-center items-center px-6">
       <div class="w-full sm:max-w-sm">
         <h2 class="text-center text-2xl font-bold mb-2">Esqueceu sua senha?</h2>
-        <h3 class="text-center text-sm  mb-10">Digite seu endereço de e-mail e enviaremos instruções para redefinir sua senha.</h3>
+        <h3 class="text-center text-sm mb-10">
+          Digite seu endereço de e-mail e enviaremos instruções para redefinir sua senha.
+        </h3>
         <form class="space-y-6" @submit.prevent="handleSubmit">
           <div>
             <InputBase

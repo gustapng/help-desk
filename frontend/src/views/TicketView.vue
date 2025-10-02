@@ -6,44 +6,63 @@ import {
   ListboxOption,
   ListboxOptions,
 } from '@headlessui/vue'
-import {
-  Plus,
-  Ticket,
-  ChevronsUpDown,
-  Check,
-} from 'lucide-vue-next'
-import { ref } from 'vue'
 import axios from 'axios'
 import type { AxiosError } from 'axios'
+import { Plus, Ticket as TicketIcon, ChevronsUpDown, Check } from 'lucide-vue-next'
+import { ref, onMounted } from 'vue'
 
-import type {
-  TicketTypeOption,
-  TicketPriorityOption,
-  TicketCreatePayload,
-} from '@/types/Ticket'
-
-import { ticketTypes, ticketPriorities } from '@/data/ticket-options'
-
-import InputBase from '@/components/inputs/InputBase.vue'
 import BaseModal from '@/components/BaseModal.vue'
 import RoundedButton from '@/components/buttons/RoundedButton.vue'
+import InputBase from '@/components/inputs/InputBase.vue'
 import Sidebar from '@/components/Sidebar.vue'
+import TicketTable from '@/components/TicketTable.vue'
+import { ticketTypes, ticketPriorities } from '@/data/ticket-options'
 import { useAlertStore } from '@/stores/alert'
+import type { TicketTypeOption, TicketCreatePayload, Ticket } from '@/types/Ticket'
+
+const isLoading = ref(true)
 
 const ticket_title = ref('')
 const ticket_description = ref('')
 const message = ref('')
 const loading = ref(false)
 const alert = useAlertStore()
+const isModalOpen = ref(false)
 
+const tickets = ref<Ticket[]>([])
 const selectedTicketType = ref<TicketTypeOption>(ticketTypes[0])
-const selectedTicketPriority = ref(<number | null>(null))
+const selectedTicketPriority = ref(<number | null>null)
+
+async function fetchTickets() {
+  isLoading.value = true
+  try {
+    const response = await axios.get('/api/tickets')
+    tickets.value = response.data.data
+  } catch (error) {
+    const err = error as AxiosError<{ message?: string; errors?: Record<string, string[]> }>
+
+    if (err.response) {
+      if (err.response.status === 422) {
+        message.value = err.response.data.message || 'Erro de validação.'
+      } else {
+        message.value = err.response.data.message || 'Ocorreu um erro no servidor.'
+      }
+    } else {
+      message.value = 'Erro de conexão. Verifique sua internet e tente novamente.'
+    }
+    alert.show(message.value, 'error')
+  } finally {
+    isLoading.value = false
+  }
+}
+
+onMounted(() => {
+  fetchTickets()
+})
 
 function selectTicketPriority(id: number) {
   selectedTicketPriority.value = id
 }
-
-const isModalOpen = ref(false)
 
 function validateForm() {
   if (!ticket_description.value) {
@@ -61,7 +80,7 @@ function validateForm() {
     return false
   }
 
-    if (selectedTicketType.value.id === 0) {
+  if (selectedTicketType.value.id === 0) {
     alert.show('É obrigatório selecionar o tipo de ticket.', 'error')
     return false
   }
@@ -70,15 +89,15 @@ function validateForm() {
 }
 
 function resetForm() {
-  ticket_title.value = '';
-  ticket_description.value = '';
-  selectedTicketType.value = ticketTypes[0];
-  selectedTicketPriority.value = null;
+  ticket_title.value = ''
+  ticket_description.value = ''
+  selectedTicketType.value = ticketTypes[0]
+  selectedTicketPriority.value = null
 }
 
 function closeModalAndReset() {
-  isModalOpen.value = false;
-  resetForm();
+  isModalOpen.value = false
+  resetForm()
 }
 
 async function handleCreateTicket() {
@@ -93,13 +112,13 @@ async function handleCreateTicket() {
       description: ticket_description.value,
       type_id: selectedTicketType.value.id,
       priority_id: selectedTicketPriority.value!,
-    };
+    }
 
-    const response = await axios.post('/api/tickets', ticketPayload);
+    const response = await axios.post('/api/tickets', ticketPayload)
 
     message.value = response.data.message
     alert.show(message.value, 'success')
-    closeModalAndReset();
+    closeModalAndReset()
   } catch (error) {
     const err = error as AxiosError<{ message?: string; errors?: Record<string, string[]> }>
 
@@ -129,23 +148,35 @@ async function handleCreateTicket() {
         Criar Ticket
       </RoundedButton>
     </div>
+
+    <div v-if="isLoading" class="mt-4 text-center">Carregando...</div>
+
+    <TicketTable
+      v-else
+      :tickets="tickets"
+      :ticket-types="ticketTypes"
+      :ticket-priorities="ticketPriorities"
+    />
+
     <BaseModal :show="isModalOpen" title="Criar Novo Ticket" size="xl" @close="isModalOpen = false">
       <template #icon>
         <div class="rounded-lg p-2 mr-2 bg-gray-200">
-          <Ticket class="text-sky-400"></Ticket>
+          <TicketIcon class="text-sky-400"></TicketIcon>
         </div>
       </template>
       <form @submit.prevent="handleCreateTicket" class="space-y-4">
         <div class="flex space-x-6">
-          <div class="flex flex-col w-full"> 
+          <div class="flex flex-col w-full">
             <div class="col-span-full h-full flex flex-col">
-              <label for="ticket_description" class="block mb-2 text-sm font-medium">Descrição</label>
-              <div class="flex-grow"> 
+              <label for="ticket_description" class="block mb-2 text-sm font-medium"
+                >Descrição</label
+              >
+              <div class="flex-grow">
                 <textarea
                   name="ticket_description"
                   id="ticket_description"
                   v-model="ticket_description"
-                  class="block h-full border border-gray-200 text-sm rounded-lg focus:ring-emerald-400 focus:border-emerald-400 w-full p-2.5 "
+                  class="block h-full border border-gray-200 text-sm rounded-lg focus:ring-emerald-400 focus:border-emerald-400 w-full p-2.5"
                 />
               </div>
             </div>
@@ -157,7 +188,7 @@ async function handleCreateTicket() {
                 label="Título do Ticket"
                 type="ticket_title"
                 v-model="ticket_title"
-                inputClass="border-gray-200" 
+                inputClass="border-gray-200"
               />
             </div>
             <div>
@@ -190,7 +221,10 @@ async function handleCreateTicket() {
                     class="grid border border-gray-200 text-sm rounded-lg focus:ring-emerald-400 focus:border-emerald-400 w-full p-2.5"
                   >
                     <span class="col-start-1 row-start-1 flex items-center gap-3 pr-6">
-                      <component :is="selectedTicketType.icon" class="size-5 shrink-0 text-gray-800" />
+                      <component
+                        :is="selectedTicketType.icon"
+                        class="size-5 shrink-0 text-gray-800"
+                      />
                       <span class="block truncate text-black">{{ selectedTicketType.title }}</span>
                     </span>
                     <ChevronsUpDown
@@ -225,7 +259,7 @@ async function handleCreateTicket() {
                             <span
                               :class="[
                                 selected ? 'font-semibold' : 'font-normal',
-                                'ml-3 block truncate text-gray-800',
+                                'ml-2 block truncate text-gray-800',
                               ]"
                               >{{ ticket.title }}</span
                             >

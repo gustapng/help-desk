@@ -14,9 +14,9 @@ import { ref, onMounted } from 'vue'
 import BaseModal from '@/components/BaseModal.vue'
 import RoundedButton from '@/components/buttons/RoundedButton.vue'
 import InputBase from '@/components/inputs/InputBase.vue'
+import PaginationControls from '@/components/PaginationControls.vue'
 import Sidebar from '@/components/Sidebar.vue'
 import TicketTable from '@/components/TicketTable.vue'
-import PaginationControls from '@/components/PaginationControls.vue'
 import { ticketTypes, ticketPriorities } from '@/data/ticket-options'
 import { useAlertStore } from '@/stores/alert'
 import type { TicketTypeOption, TicketCreatePayload, Ticket, Pagination } from '@/types/Ticket'
@@ -31,18 +31,18 @@ const alert = useAlertStore()
 const isModalOpen = ref(false)
 
 const tickets = ref<Ticket[]>([])
-const paginationInfo = ref<Pagination<Ticket> | null>(null);
+const paginationInfo = ref<Pagination<Ticket> | null>(null)
 const selectedTicketType = ref<TicketTypeOption>(ticketTypes[0])
 const selectedTicketPriority = ref(<number | null>null)
 
 async function fetchTickets(url: string = '/api/tickets') {
-  if (!url) return;
+  if (!url) return
 
   isLoading.value = true
   try {
     const response = await axios.get(url)
     tickets.value = response.data.data
-    paginationInfo.value = response.data;
+    paginationInfo.value = response.data
   } catch (error) {
     const err = error as AxiosError<{ message?: string; errors?: Record<string, string[]> }>
 
@@ -165,7 +165,7 @@ async function handleCreateTicket() {
     />
 
     <PaginationControls :pagination-info="paginationInfo" @change-page="fetchTickets" />
-  
+
     <BaseModal :show="isModalOpen" title="Criar Novo Ticket" size="xl" @close="isModalOpen = false">
       <template #icon>
         <div class="rounded-lg p-2 mr-2 bg-gray-200">

@@ -7,6 +7,10 @@ const props = defineProps<{
   ticketPriorities: TicketPriorityOption[]
 }>()
 
+const emit = defineEmits<{
+  (e: 'view-ticket', ticket: Ticket): void
+}>()
+
 function getPriorityInfo(priorityId: number): TicketPriorityOption | undefined {
   return props.ticketPriorities.find((p) => p.id === priorityId)
 }
@@ -21,25 +25,19 @@ function getTypeInfo(typeId: number): TicketTypeOption | undefined {
     <table class="w-full text-sm text-left">
       <thead class="text-xs uppercase">
         <tr>
-          <th scope="col" class="px-6 py-3 w-[40px]">
-            <input class="accent-sky-400" type="checkbox" />
-          </th>
-          <th scope="col" class="px-6 py-3 border-x border-gray-200 w-[40px]">Ticket ID</th>
+          <th scope="col" class="px-6 py-3 border-x border-gray-200 w-[110px]">Ticket ID</th>
           <th scope="col" class="px-6 py-3 border-x border-gray-200">Título</th>
           <th scope="col" class="px-6 py-3 border-x border-gray-200 w-[40px]">Prioridade</th>
           <th scope="col" class="px-6 py-3 border-x border-gray-200">Tipo</th>
-          <th scope="col" class="px-6 py-3 w-[40px]">Ação</th>
         </tr>
       </thead>
       <tbody>
         <tr
           v-for="ticket in tickets"
           :key="ticket.id"
-          class="bg-white border-b border-gray-200 hover:bg-gray-100"
+          class="bg-white border-b border-gray-200 hover:bg-gray-100 cursor-pointer"
+          @click="emit('view-ticket', ticket)"
         >
-          <td class="px-6 py-3 border-t border-gray-200">
-            <input class="accent-sky-400" type="checkbox" />
-          </td>
           <td class="px-6 py-3 border border-gray-200">#TKT-{{ ticket.id }}</td>
           <td class="px-6 py-3 border border-gray-200">
             {{ ticket.title }}
@@ -68,9 +66,6 @@ function getTypeInfo(typeId: number): TicketTypeOption | undefined {
                 getTypeInfo(ticket.type_id)!.title
               }}</span>
             </div>
-          </td>
-          <td class="px-6 py-3 border-t border-gray-200">
-            <a href="#" class="font-medium text-sky-400 hover:underline">Editar</a>
           </td>
         </tr>
       </tbody>

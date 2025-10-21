@@ -10,6 +10,7 @@ import axios from 'axios'
 import type { AxiosError } from 'axios'
 import { Plus, Ticket as TicketIcon, ChevronsUpDown, Check } from 'lucide-vue-next'
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 
 import BaseModal from '@/components/BaseModal.vue'
 import RoundedButton from '@/components/buttons/RoundedButton.vue'
@@ -29,6 +30,7 @@ const message = ref('')
 const loading = ref(false)
 const alert = useAlertStore()
 const isModalOpen = ref(false)
+const router = useRouter()
 
 const tickets = ref<Ticket[]>([])
 const paginationInfo = ref<Pagination<Ticket> | null>(null)
@@ -142,6 +144,10 @@ async function handleCreateTicket() {
     loading.value = false
   }
 }
+
+function handleViewTicket(ticket: Ticket) {
+  router.push({ name: 'ticketDetail', params: { id: ticket.id } })
+}
 </script>
 
 <template>
@@ -162,6 +168,7 @@ async function handleCreateTicket() {
       :tickets="tickets"
       :ticket-types="ticketTypes"
       :ticket-priorities="ticketPriorities"
+      @view-ticket="handleViewTicket"
     />
 
     <PaginationControls :pagination-info="paginationInfo" @change-page="fetchTickets" />

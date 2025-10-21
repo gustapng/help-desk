@@ -20,9 +20,9 @@ function onPageChange(link: PaginationLink) {
       <div>
         <p class="text-sm text-gray-400">
           Mostrando
-          <span class="font-medium">1</span>
+          <span class="font-medium">{{ paginationInfo.from }}</span>
           a
-          <span class="font-medium">{{ paginationInfo.per_page }}</span>
+          <span class="font-medium">{{ paginationInfo.to }}</span>
           de
           <span class="font-medium">{{ paginationInfo.total }}</span>
           resultados
